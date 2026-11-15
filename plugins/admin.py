@@ -151,25 +151,31 @@ async def add_premium_user(client: Client, message: Message):
         return await pro.edit("<b>❌ ɪɴᴠᴀʟɪᴅ ᴜsᴇʀ ɪᴅ! ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ɴᴜᴍᴇʀɪᴄ ᴜsᴇʀ ɪᴅ.</b>", reply_markup=reply_markup)
 
     try:
+        joined_date = datetime.now().strftime("%d-%b-%Y")
+        expire_date = datetime.now() + timedelta(days=30)
+        formatted_expire = expire_date.strftime("%d-%b-%Y")
+
+        # Database function fix: passing expiry date correctly
         if hasattr(db, 'add_premium'):
-            await db.add_premium(user_id)
+            try:
+                await db.add_premium(user_id, expire_date)
+            except TypeError:
+                await db.add_premium(user_id)
         
         try:
             target_user = await client.get_users(user_id)
         except:
             target_user = message.from_user
 
-        joined_date = datetime.now().strftime("%d-%b-%Y")
-        expire_date = (datetime.now() + timedelta(days=30)).strftime("%d-%b-%Y")
-
         premium_log_text = (
             f"<b>⚡ #ᴘʀᴇᴍɪᴜᴍ_ᴜsᴇʀ_ᴀᴅᴅᴇᴅ</b>\n\n"
+            f"<b><blockquote>❝ ᴛʜᴇ ʙᴇsᴛ ᴡᴀʏ ᴛᴏ ᴘʀᴇᴅɪᴄᴛ ᴛʜᴇ ғᴜᴛᴜʀᴇ ɪs ᴛᴏ ɪɴᴠᴇɴᴛ ɪᴛ. ❞</b></blockquote>\n\n"
             f"<b>👤 ᴜsᴇʀ ɴᴀᴍᴇ:</b> {target_user.mention}\n"
             f"<b>🆔 ᴜsᴇʀ ɪᴅ:</b> <code>{target_user.id}</code>\n"
             f"<b>🌐 ᴜsᴇʀɴᴀᴍᴇ:</b> @{target_user.username or 'ɴᴏɴᴇ'}\n"
             f"<b>💎 sᴛᴀᴛᴜs:</b> <code>ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴛɪᴠᴀᴛᴇᴅ</code>\n"
             f"<b>📅 ᴊᴏɪɴᴇᴅ/ᴀᴄᴛɪᴠᴀᴛᴇᴅ ᴅᴀᴛᴇ:</b> <code>{joined_date}</code>\n"
-            f"<b>⏳ ᴇxᴘɪʀᴇ ᴅᴀᴛᴇ:</b> <code>{expire_date}</code>\n"
+            f"<b>⏳ ᴇxᴘɪʀᴇ ᴅᴀᴛᴇ:</b> <code>{formatted_expire}</code>\n"
             f"<b>🛠️ ᴀᴅᴅᴇᴅ ʙʏ ᴀᴅᴍɪɴ:</b> {message.from_user.mention}"
         )
 
@@ -209,3 +215,4 @@ async def remove_premium_user(client: Client, message: Message):
         await pro.edit(f"<b>⛔️ sᴜᴄᴄᴇssғᴜʟʟʏ ʀᴇᴍᴏᴠᴇᴅ ᴜsᴇʀ <code>{user_id}</code> ғʀᴏᴍ ᴘʀᴇᴍɪᴜᴍ.</b>", reply_markup=reply_markup)
     except Exception as e:
         await pro.edit(f"<b>❌ ᴇʀʀᴏʀ:</b> <code>{e}</code>", reply_markup=reply_markup)
+                
