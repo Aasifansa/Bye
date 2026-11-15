@@ -14,19 +14,30 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from database.database import *
 from datetime import datetime
 
-# Helper function: Photo message ho toh edit_caption, text message ho toh edit_text
+# Ultra-safe smart edit helper (Photo/Text dono ke liye 100% working)
 async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMarkup):
-    if query.message.photo:
-        await query.message.edit_caption(
-            caption=text,
-            reply_markup=reply_markup
-        )
-    else:
-        await query.message.edit_text(
-            text=text,
-            disable_web_page_preview=True,
-            reply_markup=reply_markup
-        )
+    try:
+        if query.message.photo:
+            await query.message.edit_caption(
+                caption=text,
+                reply_markup=reply_markup
+            )
+        else:
+            await query.message.edit_text(
+                text=text,
+                disable_web_page_preview=True,
+                reply_markup=reply_markup
+            )
+    except Exception:
+        # Fallback agar media state mismatch ho jaye
+        try:
+            await query.message.edit_text(
+                text=text,
+                disable_web_page_preview=True,
+                reply_markup=reply_markup
+            )
+        except Exception as e:
+            print(f"Smart Edit Error: {e}")
 
 @Bot.on_callback_query()
 async def cb_handler(client: Bot, query: CallbackQuery):
@@ -80,7 +91,6 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         elif data == "my_plan_cb":
             is_active, expiry = await db.check_paid_access(user_id)
             
-            # Alert box mein HTML tags support nahi hote, isliye clean Small Caps use kiya hai
             if is_active and expiry:
                 time_left = expiry - datetime.utcnow()
                 days_left = time_left.days
@@ -171,4 +181,3 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-                
