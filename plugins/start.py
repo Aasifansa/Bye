@@ -37,7 +37,7 @@ async def start_command(client: Client, message: Message):
     banned_users = await db.get_ban_users()
     if user_id in banned_users:
         return await message.reply_text(
-            "<blockquote><b>⛔️ yᴏᴜ ᴀʀᴇ ʙᴀɴɴᴇᴅ ꜰʀᴏᴍ ᴜꜱɪɴɢ ᴛʜɪꜱ ʙᴏᴛ.</b>\n\n"
+            "<blockquote><b>⛔️ ʏᴏᴜ ᴀʀᴇ ʙᴀɴɴᴇᴅ ꜰʀᴏᴍ ᴜꜱɪɴɢ ᴛʜɪꜱ ʙᴏᴛ.</b>\n\n"
             "<i>ᴄᴏɴᴛᴀᴄᴛ ꜱᴜᴩᴩᴏʀᴛ ɪꜰ yᴏᴜ ᴛʜɪɴᴋ ᴛʜɪꜱ ɪꜱ ᴀ ᴍɪꜱᴛᴀᴋᴇ.</i></blockquote>",
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("🆘 ᴄᴏɴᴛᴀᴄᴛ ꜱᴜᴩᴩᴏʀᴛ", url=BAN_SUPPORT)]]
@@ -49,11 +49,27 @@ async def start_command(client: Client, message: Message):
         return await not_joined(client, message)
 
     # Add user if not already present
+    is_new_user = False
     if not await db.present_user(user_id):
         try:
             await db.add_user(user_id)
+            is_new_user = True
         except:
             pass
+
+    # --- 👤 LOG: User Started Bot ---
+    try:
+        current_time = datetime.now().strftime("%d-%b-%Y | %I:%M:%S %p")
+        log_text = (
+            f"<b>#USER_STARTED_BOT</b>\n\n"
+            f"<b>👤 Name:</b> {message.from_user.mention}\n"
+            f"<b>🆔 User ID:</b> <code>{message.from_user.id}</code>\n"
+            f"<b>🌐 Username:</b> @{message.from_user.username or 'None'}\n"
+            f"<b>📅 Date & Time:</b> <code>{current_time}</code>"
+        )
+        await client.send_photo(LOG_CHANNEL, photo=LOG_PIC, caption=log_text)
+    except Exception as e:
+        print(f"Start Log Error: {e}")
 
     # 🚫 PAID CHECK: Check whether user has active paid/VIP access
     is_active, expiry = await db.check_paid_access(user_id)
@@ -65,10 +81,10 @@ async def start_command(client: Client, message: Message):
         if not is_active and user_id not in ADMINS:
             return await message.reply_text(
                 "<blockquote><b>⛔️ ᴩᴀɪᴅ ᴀᴄᴄᴇꜱꜱ ʀᴇqᴜɪʀᴇᴅ!</b>\n\n"
-                "<i>ʏᴇ ʙᴏᴛ ᴀʙ <b>ᴩᴀɪᴅ</b> ʜᴏ 🫥ᴜᴋᴀ ʜᴀɪ. ꜰɪʟᴇꜱ ᴋᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴀᴄᴛɪᴠᴇ <b>ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ</b> ʜᴏɴᴀ ᴄʜᴀʜɪyᴇ.</i></blockquote>",
+                "<i>ʏᴇ ʙᴏᴛ ᴀʙ <b>ᴩᴀɪᴅ</b> ʜᴏ 🫥ᴜᴋᴀ ʜᴀɪ. ꜰɪʟᴇꜱ ᴋᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴀᴄᴛɪᴠᴇ <b>ᴠɪᩩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ</b> ʜᴏɴᴀ ᴄʜᴀʜɪyᴇ.</i></blockquote>",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK)],
+                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK)],
                         [InlineKeyboardButton("👤 ᴄʜᴇᴄᴋ ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
                         [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
                     ]
@@ -180,7 +196,7 @@ async def start_command(client: Client, message: Message):
         reply_markup = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK),
+                    InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK),
                     InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")
                 ],
                 [
@@ -204,7 +220,7 @@ async def start_command(client: Client, message: Message):
                 username=None if not message.from_user.username else '@' + message.from_user.username,
                 mention=message.from_user.mention,
                 id=message.from_user.id
-            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
+            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
             reply_markup=reply_markup,
             message_effect_id=5104841245755180586)  # 🔥
         
@@ -320,4 +336,3 @@ async def bcmd(bot: Bot, message: Message):
         ]
     )
     await message.reply(text=CMD_TXT, reply_markup=reply_markup, quote=True)
-    
