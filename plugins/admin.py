@@ -55,7 +55,7 @@ async def add_admins(client: Client, message: Message):
             admin_list += f"<b><blockquote>(ɪᴅ: <code>{id}</code>) ᴀᴅᴅᴇᴅ.</blockquote></b>\n"
             check += 1
         else:
-            admin_list += f"<blockquote><b>ɪɴᴠᴀʟɪᴅ ɪᴅ: <code>{id}</code></b></blockquote>\n"
+            admin_list += f"<b><blockquote>ɪɴᴠᴀʟɪᴅ ɪᴅ: <code>{id}</code></b></blockquote>\n"
 
     if check == len(admins):
         for id in admins:
@@ -139,9 +139,16 @@ async def add_premium_user(client: Client, message: Message):
 
     if not args:
         return await pro.edit(
-            "<b><blockquote>ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴜsᴇʀ ɪᴅ ᴛᴏ ᴀᴅᴅ ᴛᴏ ᴘʀᴇᴍɪᴜᴍ.</blockquote></b>\n\n"
-            "<b>ᴜsᴀɢᴇ:</b>\n"
-            "<code>/add_premium [user_id]</code>",
+            "<b><blockquote>ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ᴜsᴇʀ ɪᴅ ᴀɴᴅ ᴅᴜʀᴀᴛɪᴏɴ.\n\n"
+            "ᴜsᴀɢᴇ:\n"
+            "<code>/add_premium [user_id] [duration]</code>\n\n"
+            "ᴇxᴀᴍᴘʟᴇs:\n"
+            "• <code>/add_premium 123456789 30m</code> (30 ᴍɪɴs)\n"
+            "• <code>/add_premium 123456789 2h</code> (2 ʜᴏᴜʀs)\n"
+            "• <code>/add_premium 123456789 7d</code> (7 ᴅᴀʏs)\n"
+            "• <code>/add_premium 123456789 1m</code> (1 ᴍᴏɴᴛʜ)\n"
+            "• <code>/add_premium 123456789 1y</code> (1 ʏᴇᴀʀ)\n"
+            "• <code>/add_premium 123456789 lifetime</code> (ʟɪғᴇᴛɪᴍᴇ)</blockquote></b>",
             reply_markup=reply_markup
         )
 
@@ -150,12 +157,62 @@ async def add_premium_user(client: Client, message: Message):
     except ValueError:
         return await pro.edit("<b>❌ ɪɴᴠᴀʟɪᴅ ᴜsᴇʀ ɪᴅ! ᴘʟᴇᴀsᴇ ᴘʀᴏᴠɪᴅᴇ ᴀ ɴᴜᴍᴇʀɪᴄ ᴜsᴇʀ ɪᴅ.</b>", reply_markup=reply_markup)
 
-    try:
-        joined_date = datetime.now().strftime("%d-%b-%Y")
-        expire_date = datetime.now() + timedelta(days=30)
-        formatted_expire = expire_date.strftime("%d-%b-%Y")
+    # Duration parsing logic
+    duration_str = args[1].lower() if len(args) > 1 else "1m" # Default 1 month if not provided
+    now = datetime.now()
 
-        # Database function fix: passing expiry date correctly
+    if duration_str == "lifetime":
+        expire_date = now + timedelta(days=3650)
+        formatted_expire = "ʟɪғᴇᴛɪᴍᴇ (ᴜɴʟɪᴍɪᴛᴇᴅ)"
+    elif duration_str.endswith("m") and not duration_str.endswith("mo"): # minutes e.g., 30m
+        try:
+            mins = int(duration_str[:-1])
+            expire_date = now + timedelta(minutes=mins)
+            formatted_expire = expire_date.strftime("%d-%b-%Y | %I:%M %p")
+        except:
+            return await pro.edit("<b>❌ ɪɴᴠᴀʟɪᴅ ᴍɪɴᴜᴛᴇs ғᴏʀᴍᴀᴛ! (ᴇx: <code>30m</code>)</b>", reply_markup=reply_markup)
+    elif duration_str.endswith("h"): # hours e.g., 2h
+        try:
+            hrs = int(duration_str[:-1])
+            expire_date = now + timedelta(hours=hrs)
+            formatted_expire = expire_date.strftime("%d-%b-%Y | %I:%M %p")
+        except:
+            return await pro.edit("<b>❌ ɪɴᴠᴀʟɪᴅ ʜᴏᴜʀs ғᴏʀᴍᴀᴛ! (ᴇx: <code>2h</code>)</b>", reply_markup=reply_markup)
+    elif duration_str.endswith("d"): # days e.g., 7d, 15d
+        try:
+            days = int(duration_str[:-1])
+            expire_date = now + timedelta(days=days)
+            formatted_expire = expire_date.strftime("%d-%b-%Y")
+        except:
+            return await pro.edit("<b>❌ ɪɴᴠᴀʟɪᴅ ᴅᴀʏs ғᴏʀᴍᴀᴛ! (ᴇx: <code>7d</code>)</b>", reply_markup=reply_markup)
+    elif duration_str.endswith("mo") or duration_str == "month": # months e.g., 1mo, 2mo
+        try:
+            mos = int(duration_str[:-2]) if duration_str.endswith("mo") else 1
+            expire_date = now + timedelta(days=mos * 30)
+            formatted_expire = expire_date.strftime("%d-%b-%Y")
+        except:
+            expire_date = now + timedelta(days=30)
+            formatted_expire = expire_date.strftime("%d-%b-%Y")
+    elif duration_str.endswith("y"): # years e.g., 1y
+        try:
+            yrs = int(duration_str[:-1])
+            expire_date = now + timedelta(days=yrs * 365)
+            formatted_expire = expire_date.strftime("%d-%b-%Y")
+        except:
+            return await pro.edit("<b>❌ ɪɴᴠᴀʟɪᴅ ʏᴇᴀʀs ғᴏʀᴍᴀᴛ! (ᴇx: <code>1y</code>)</b>", reply_markup=reply_markup)
+    else:
+        # Default fallback to days if number is passed directly
+        try:
+            days = int(duration_str)
+            expire_date = now + timedelta(days=days)
+            formatted_expire = expire_date.strftime("%d-%b-%Y")
+        except:
+            expire_date = now + timedelta(days=30)
+            formatted_expire = expire_date.strftime("%d-%b-%Y")
+
+    joined_date = now.strftime("%d-%b-%Y")
+
+    try:
         if hasattr(db, 'add_premium'):
             try:
                 await db.add_premium(user_id, expire_date)
@@ -168,15 +225,16 @@ async def add_premium_user(client: Client, message: Message):
             target_user = message.from_user
 
         premium_log_text = (
-            f"<b>⚡ #ᴘʀᴇᴍɪᴜᴍ_ᴜsᴇʀ_ᴀᴅᴅᴇᴅ</b>\n\n"
-            f"<b><blockquote>❝ ᴛʜᴇ ʙᴇsᴛ ᴡᴀʏ ᴛᴏ ᴘʀᴇᴅɪᴄᴛ ᴛʜᴇ ғᴜᴛᴜʀᴇ ɪs ᴛᴏ ɪɴᴠᴇɴᴛ ɪᴛ. ❞</b></blockquote>\n\n"
+            f"<blockquote><b>⚡ #ᴘʀᴇᴍɪᴜᴍ_ᴜsᴇʀ_ᴀᴅᴅᴇᴅ</b>\n\n"
+            f"<b>ᴄᴏᴅᴇ ɪs ʟɪᴋᴇ ʜᴜᴍᴏʀ, ɪᴛ ᴡᴏʀᴋs ʙᴇsᴛ</b>\n"
+            f"<b>ᴡʜᴇɴ ɪᴛ ɪs ᴇxᴘʀᴇssᴇᴅ ɪɴ sɪᴍᴘʟᴇ ᴡᴏʀᴅs.</b>\n\n"
             f"<b>👤 ᴜsᴇʀ ɴᴀᴍᴇ:</b> {target_user.mention}\n"
             f"<b>🆔 ᴜsᴇʀ ɪᴅ:</b> <code>{target_user.id}</code>\n"
             f"<b>🌐 ᴜsᴇʀɴᴀᴍᴇ:</b> @{target_user.username or 'ɴᴏɴᴇ'}\n"
             f"<b>💎 sᴛᴀᴛᴜs:</b> <code>ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴛɪᴠᴀᴛᴇᴅ</code>\n"
             f"<b>📅 ᴊᴏɪɴᴇᴅ/ᴀᴄᴛɪᴠᴀᴛᴇᴅ ᴅᴀᴛᴇ:</b> <code>{joined_date}</code>\n"
             f"<b>⏳ ᴇxᴘɪʀᴇ ᴅᴀᴛᴇ:</b> <code>{formatted_expire}</code>\n"
-            f"<b>🛠️ ᴀᴅᴅᴇᴅ ʙʏ ᴀᴅᴍɪɴ:</b> {message.from_user.mention}"
+            f"<b>🛠️ ᴀᴅᴅᴇᴅ ʙʏ ᴀᴅᴍɪɴ:</b> {message.from_user.mention}</blockquote>"
         )
 
         try:
@@ -215,4 +273,4 @@ async def remove_premium_user(client: Client, message: Message):
         await pro.edit(f"<b>⛔️ sᴜᴄᴄᴇssғᴜʟʟʏ ʀᴇᴍᴏᴠᴇᴅ ᴜsᴇʀ <code>{user_id}</code> ғʀᴏᴍ ᴘʀᴇᴍɪᴜᴍ.</b>", reply_markup=reply_markup)
     except Exception as e:
         await pro.edit(f"<b>❌ ᴇʀʀᴏʀ:</b> <code>{e}</code>", reply_markup=reply_markup)
-                
+    
