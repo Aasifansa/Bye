@@ -57,19 +57,22 @@ async def start_command(client: Client, message: Message):
         except:
             pass
 
-    # --- 👤 LOG: User Started Bot ---
-    try:
-        current_time = datetime.now().strftime("%d-%b-%Y | %I:%M:%S %p")
-        log_text = (
-            f"<b>#USER_STARTED_BOT</b>\n\n"
-            f"<b>👤 Name:</b> {message.from_user.mention}\n"
-            f"<b>🆔 User ID:</b> <code>{message.from_user.id}</code>\n"
-            f"<b>🌐 Username:</b> @{message.from_user.username or 'None'}\n"
-            f"<b>📅 Date & Time:</b> <code>{current_time}</code>"
-        )
-        await client.send_photo(LOG_CHANNEL, photo=LOG_PIC, caption=log_text)
-    except Exception as e:
-        print(f"Start Log Error: {e}")
+    # --- 👤 LOG: User Started Bot (Only First Time) ---
+    if is_new_user:
+        try:
+            current_time = datetime.now().strftime("%d-%b-%Y | %I:%M:%S %p")
+            log_text = (
+                f"<blockquote><b>🚀 #ɴᴇᴡ_ᴜsᴇʀ_sᴛᴀʀᴛᴇᴅ_ʙᴏᴛ</b>\n\n"
+                f"<b>ᴄᴏᴅᴇ ɪs ʟɪᴋᴇ ʜᴜᴍᴏʀ, ɪᴛ ᴡᴏʀᴋs ʙᴇsᴛ</b>\n"
+                f"<b>ᴡʜᴇɴ ɪᴛ ɪs ᴇxᴘʀᴇssᴇᴅ ɪɴ sɪᴍᴘʟᴇ ᴡᴏʀᴅs.</b>\n\n"
+                f"<b>👤 ᴜsᴇʀ ɴᴀᴍᴇ:</b> {message.from_user.mention}\n"
+                f"<b>🆔 ᴜsᴇʀ ɪᴅ:</b> <code>{message.from_user.id}</code>\n"
+                f"<b>🌐 ᴜsᴇʀɴᴀᴍᴇ:</b> @{message.from_user.username or 'ɴᴏɴᴇ'}\n"
+                f"<b>📅 ᴅᴀᴛᴇ & ᴛɪᴍᴇ:</b> <code>{current_time}</code></blockquote>"
+            )
+            await client.send_message(LOG_CHANNEL, log_text)
+        except Exception as e:
+            print(f"sᴛᴀʀᴛ ʟᴏɢ ᴇʀʀᴏʀ: {e}")
 
     # 🚫 PAID CHECK: Check whether user has active paid/VIP access
     is_active, expiry = await db.check_paid_access(user_id)
