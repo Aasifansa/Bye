@@ -14,6 +14,20 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from database.database import *
 from datetime import datetime
 
+# Helper function: Photo message ho toh edit_caption, text message ho toh edit_text
+async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMarkup):
+    if query.message.photo:
+        await query.message.edit_caption(
+            caption=text,
+            reply_markup=reply_markup
+        )
+    else:
+        await query.message.edit_text(
+            text=text,
+            disable_web_page_preview=True,
+            reply_markup=reply_markup
+        )
+
 @Bot.on_callback_query()
 async def cb_handler(client: Bot, query: CallbackQuery):
     data = query.data
@@ -21,35 +35,44 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
     try:
         if data == "help":
-            await query.message.edit_text(
-                text=HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() or 'HELP_TXT' in locals() else "<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>",
-                disable_web_page_preview=True,
+            help_text = HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() else "<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>"
+            await smart_edit(
+                query,
+                text=f"<blockquote>{help_text}</blockquote>",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('ʜᴏᴍᴇ', callback_data='start'),
-                     InlineKeyboardButton("ᴄʟᴏꜱᴇ", callback_data='close')]
+                    [InlineKeyboardButton('🏠 ʜᴏᴍᴇ', callback_data='start'),
+                     InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
                 ])
             )
 
         elif data == "about":
-            await query.message.edit_text(
-                text=ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() or 'ABOUT_TXT' in locals() else "<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>",
-                disable_web_page_preview=True,
+            about_text = ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() else "<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>"
+            await smart_edit(
+                query,
+                text=f"<blockquote>{about_text}</blockquote>",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('ʜᴏᴍᴇ', callback_data='start'),
-                     InlineKeyboardButton('ᴄʟᴏꜱᴇ', callback_data='close')]
+                    [InlineKeyboardButton('🏠 ʜᴏᴍᴇ', callback_data='start'),
+                     InlineKeyboardButton('❌ ᴄʟᴏꜱᴇ', callback_data='close')]
                 ])
             )
 
         elif data == "start":
-            start_text = START_MSG.format(first=query.from_user.first_name) if 'START_MSG' in globals() or 'START_MSG' in locals() else "<b>ᴡᴇʟᴄᴏᴍᴇ!</b>"
-            await query.message.edit_text(
+            start_text = START_MSG.format(
+                first=query.from_user.first_name,
+                last=query.from_user.last_name,
+                username=None if not query.from_user.username else '@' + query.from_user.username,
+                mention=query.from_user.mention,
+                id=query.from_user.id
+            ) if 'START_MSG' in globals() else "<b>ᴡᴇʟᴄᴏᴍᴇ!</b>"
+
+            await smart_edit(
+                query,
                 text=start_text + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ. ʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
-                disable_web_page_preview=True,
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ", url="https://t.me/mrkillersss"),
                      InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
-                    [InlineKeyboardButton("ʜᴇʟᴩ", callback_data='help'),
-                     InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data='about')],
+                    [InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data='help'),
+                     InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data='about')],
                     [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
                 ])
             )
@@ -57,23 +80,24 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         elif data == "my_plan_cb":
             is_active, expiry = await db.check_paid_access(user_id)
             
+            # Alert box mein HTML tags support nahi hote, isliye clean Small Caps use kiya hai
             if is_active and expiry:
                 time_left = expiry - datetime.utcnow()
                 days_left = time_left.days
                 hours_left = time_left.seconds // 3600
                 
                 text = (
-                    f"<b>🌟 ʏᴏᴜʀ ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ ꜱᴛᴀᴛᴜꜱ 🌟</b>\n\n"
-                    f"<blockquote><b>• ᴩʟᴀɴ ᴛyᴩᴇ:</b> <code>ᴠɪᴩ ᴩᴀɪᴅ ᴍᴇᴍʙᴇʀ</code>\n"
-                    f"<b>• ꜱᴛᴀᴛᴜꜱ:</b> <code>ᴀᴄᴛɪᴠᴇ ✅</code>\n"
-                    f"<b>• ᴛɪᴍᴇ ʀᴇᴍᴀɪɴɪɴɢ:</b> <code>{days_left} ᴅᴀyꜱ, {hours_left} ʜᴏᴜʀꜱ</code>\n"
-                    f"<b>• ᴇxᴩɪʀy ᴅᴀᴛᴇ (ᴜᴛᴄ):</b> <code>{expiry.strftime('%Y-%m-%d %H:%M:%S')}</code></blockquote>"
+                    f"🌟 ʏᴏᴜʀ ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ ꜱᴛᴀᴛᴜꜱ 🌟\n\n"
+                    f"• ᴩʟᴀɴ: ᴠɪᴩ ᴩᴀɪᴅ ᴍᴇᴍʙᴇʀ\n"
+                    f"• ꜱᴛᴀᴛᴜꜱ: ᴀᴄᴛɪᴠᴇ ✅\n"
+                    f"• ᴛɪᴍᴇ ʟᴇꜰᴛ: {days_left} ᴅᴀyꜱ, {hours_left} ʜᴏᴜʀꜱ\n"
+                    f"• ᴇxᴩɪʀy (ᴜᴛᴄ): {expiry.strftime('%Y-%m-%d %H:%M')}"
                 )
             else:
                 text = (
-                    f"<b>👤 ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ᴩʟᴀɴ:</b> <code>ꜰʀᴇᴇ / ᴜɴᴩᴀɪᴅ ᴜꜱᴇʀ</code>\n\n"
-                    f"<blockquote><b>❌ ꜱᴛᴀᴛᴜꜱ:</b> <code>ɴᴏ ᴀᴄᴛɪᴠᴇ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ ⚠️</code>\n\n"
-                    f"<i>ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴋᴏɪ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴩʟᴀɴ ɴᴀʜɪ ʜᴀɪ. ꜰɪʟᴇꜱ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴩʟᴇᴀꜱᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴩᴜʀᴄʜᴀꜱᴇ ᴋᴀʀᴇɪɴ.</i></blockquote>"
+                    f"👤 ᴀᴄᴄᴏᴜɴᴛ ᴩʟᴀɴ: ꜰʀᴇᴇ / ᴜɴᴩᴀɪᴅ\n\n"
+                    f"❌ ꜱᴛᴀᴛᴜꜱ: ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴩʟᴀɴ ⚠️\n\n"
+                    f"ꜰɪʟᴇꜱ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴩʟᴇᴀꜱᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴩᴜʀᴄʜᴀꜱᴇ ᴋᴀʀᴇɪɴ."
                 )
             
             await query.answer(text, show_alert=True)
@@ -92,7 +116,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 chat = await client.get_chat(cid)
                 mode = await db.get_channel_mode(cid)
                 status = "🟢 ᴏɴ" if mode == "on" else "🔴 ᴏꜰꜰ"
-                new_mode = "ᴏꜰꜰ" if mode == "on" else "on"
+                new_mode = "off" if mode == "on" else "on"
                 buttons = [
                     [InlineKeyboardButton(f"ʀᴇq ᴍᴏᴅᴇ {'OFF' if mode == 'on' else 'ON'}", callback_data=f"rfs_toggle_{cid}_{new_mode}")],
                     [InlineKeyboardButton("‹ ʙᴀᴄᴋ", callback_data="fsub_back")]
@@ -144,7 +168,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
     except Exception as e:
         print(f"[CB ERROR]: {e}")
         try:
-            await query.answer("ꜱᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ wʀᴏɴɢ!", show_alert=True)
+            await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-    
+                
