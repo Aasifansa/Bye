@@ -14,28 +14,15 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from database.database import *
 from datetime import datetime
 
-# Ultra-safe smart edit helper (Photo/Text dono ke liye 100% working)
 async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMarkup):
     try:
         if query.message.photo:
-            await query.message.edit_caption(
-                caption=text,
-                reply_markup=reply_markup
-            )
+            await query.message.edit_caption(caption=text, reply_markup=reply_markup)
         else:
-            await query.message.edit_text(
-                text=text,
-                disable_web_page_preview=True,
-                reply_markup=reply_markup
-            )
+            await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup)
     except Exception:
-        # Fallback agar media state mismatch ho jaye
         try:
-            await query.message.edit_text(
-                text=text,
-                disable_web_page_preview=True,
-                reply_markup=reply_markup
-            )
+            await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup)
         except Exception as e:
             print(f"Smart Edit Error: {e}")
 
@@ -43,10 +30,11 @@ async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboa
 async def cb_handler(client: Bot, query: CallbackQuery):
     data = query.data
     user_id = query.from_user.id
+    print(f"[DEBUG CB]: Received callback data -> {data} from user {user_id}")
 
     try:
         if data == "help":
-            help_text = HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() else "<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>"
+            help_text = HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() or 'HELP_TXT' in locals() else f"<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>\n\n<i>ʜᴇʟʟᴏ {query.from_user.first_name}, ʏᴇ ᴇᴋ ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ ʜᴀɪ.</i>"
             await smart_edit(
                 query,
                 text=f"<blockquote>{help_text}</blockquote>",
@@ -57,7 +45,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             )
 
         elif data == "about":
-            about_text = ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() else "<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>"
+            about_text = ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() or 'ABOUT_TXT' in locals() else f"<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>\n\n<i>ᴄʀᴇᴀᴛᴇᴅ ғᴏʀ ꜱᴇᴄᴜʀᴇ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ.</i>"
             await smart_edit(
                 query,
                 text=f"<blockquote>{about_text}</blockquote>",
@@ -70,11 +58,11 @@ async def cb_handler(client: Bot, query: CallbackQuery):
         elif data == "start":
             start_text = START_MSG.format(
                 first=query.from_user.first_name,
-                last=query.from_user.last_name,
+                last=query.from_user.last_name or "",
                 username=None if not query.from_user.username else '@' + query.from_user.username,
                 mention=query.from_user.mention,
                 id=query.from_user.id
-            ) if 'START_MSG' in globals() else "<b>ᴡᴇʟᴄᴏᴍᴇ!</b>"
+            ) if 'START_MSG' in globals() or 'START_MSG' in locals() else f"<b>ᴡᴇʟᴄᴏᴍᴇ {query.from_user.first_name}!</b>"
 
             await smart_edit(
                 query,
@@ -106,7 +94,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             else:
                 text = (
                     f"👤 ᴀᴄᴄᴏᴜɴᴛ ᴩʟᴀɴ: ꜰʀᴇᴇ / ᴜɴᴩᴀɪᴅ\n\n"
-                    f"❌ ꜱᴛᴀᴛᴜꜱ: ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴩʟᴀɴ ⚠️\n\n"
+                    f"❌ ꜱᴛᴀᴛᴜꜱ: ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ ⚠️\n\n"
                     f"ꜰɪʟᴇꜱ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴩʟᴇᴀꜱᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴩᴜʀᴄʜᴀꜱᴇ ᴋᴀʀᴇɪɴ."
                 )
             
@@ -181,3 +169,4 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
+    
