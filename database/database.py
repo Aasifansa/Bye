@@ -53,6 +53,44 @@ class Rohit:
         return
 
 
+    # ================= PAID / PREMIUM USER DATA =================
+    async def add_premium(self, user_id: int, expiry_date: datetime):
+        """User ko Paid/VIP access deta hai"""
+        await self.user_data.update_one(
+            {'_id': int(user_id)},
+            {'$set': {'is_premium': True, 'expiry_date': expiry_date}},
+            upsert=True
+        )
+
+    async def remove_premium(self, user_id: int):
+        """User ka Paid/VIP access khatam karta hai"""
+        await self.user_data.update_one(
+            {'_id': int(user_id)},
+            {'$set': {'is_premium': False, 'expiry_date': None}}
+        )
+
+    async def check_paid_access(self, user_id: int):
+        """Check karta hai ki user ke paas active Paid/VIP access hai ya nahi"""
+        user = await self.user_data.find_one({'_id': int(user_id)})
+        if user and user.get('is_premium', False):
+            expiry = user.get('expiry_date')
+            if expiry and expiry > datetime.utcnow():
+                return True, expiry
+            else:
+                # Agar validity khatam ho gayi hai toh auto-remove kar dega
+                await self.remove_premium(user_id)
+                return False, None
+        return False, None
+
+    async def get_all_premium_users(self):
+        """Saare active premium users ki list nikalne ke liye"""
+        now = datetime.utcnow()
+        cursor = self.user_data.find({'is_premium': True, 'expiry_date': {'$gt': now}})
+        docs = await cursor.to_list(length=None)
+        return [doc['_id'] for doc in docs]
+    # ==============================================================
+
+
     # ADMIN DATA
     async def admin_exist(self, admin_id: int):
         found = await self.admins_data.find_one({'_id': admin_id})
@@ -95,7 +133,6 @@ class Rohit:
         return user_ids
 
 
-
     # AUTO DELETE TIMER SETTINGS
     async def set_del_timer(self, value: int):        
         existing = await self.del_timer_data.find_one({})
@@ -132,7 +169,7 @@ class Rohit:
         return channel_ids
 
     
-# Get current mode of a channel
+    # Get current mode of a channel
     async def get_channel_mode(self, channel_id: int):
         data = await self.fsub_data.find_one({'_id': channel_id})
         return data.get("mode", "off") if data else "off"
@@ -145,9 +182,8 @@ class Rohit:
             upsert=True
         )
 
-    # REQUEST FORCE-SUB MANAGEMENT
 
-    # Add the user to the set of users for a   specific channel
+    # REQUEST FORCE-SUB MANAGEMENT
     async def req_user(self, channel_id: int, user_id: int):
         try:
             await self.rqst_fsub_Channel_data.update_one(
@@ -159,15 +195,13 @@ class Rohit:
             print(f"[DB ERROR] Failed to add user to request list: {e}")
 
 
-    # Method 2: Remove a user from the channel set
     async def del_req_user(self, channel_id: int, user_id: int):
-        # Remove the user from the set of users for the channel
         await self.rqst_fsub_Channel_data.update_one(
             {'_id': channel_id}, 
             {'$pull': {'user_ids': user_id}}
         )
 
-    # Check if the user exists in the set of the channel's users
+
     async def req_user_exist(self, channel_id: int, user_id: int):
         try:
             found = await self.rqst_fsub_Channel_data.find_one({
@@ -180,18 +214,11 @@ class Rohit:
             return False  
 
 
-    # Method to check if a channel exists using show_channels
     async def reqChannel_exist(self, channel_id: int):
-    # Get the list of all channel IDs from the database
         channel_ids = await self.show_channels()
-        #print(f"All channel IDs in the database: {channel_ids}")
-
-    # Check if the given channel_id is in the list of channel IDs
         if channel_id in channel_ids:
-            #print(f"Channel {channel_id} found in the database.")
             return True
         else:
-            #print(f"Channel {channel_id} NOT found in the database.")
             return False
 
 
