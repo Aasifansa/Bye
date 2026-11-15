@@ -26,7 +26,7 @@ API_HASH = os.environ.get("API_HASH", "dec03cafafbd892b285499762a896082") #Your 
 CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002208437940")) #Your db channel Id
 
 # ᴀ ʙᴏᴛ ɪs ɴᴏᴛ ᴊᴜsᴛ ʟɪɴᴋs ᴀɴᴅ ᴄᴏᴅᴇ, ɪᴛ ɪs ᴛʜᴇ ʙʀɪᴅɢᴇ ʙᴇᴛᴡᴇᴇɴ ᴄᴜʀɪᴏsɪᴛʏ ᴀɴᴅ ᴅɪsᴄᴏᴠᴇʀʏ.
-# ❝ ᴛʜᴇ ʙᴇsᴛ ᴡᴀʏ ᴛᴏ ᴘʀᴇᴅɪᴄᴛ ᴛʜᴇ ғᴜᴛᴜʀᴇ ɪs ᴛᴏ ɪɴᴠᴇɴᴛ ɪᴛ, ᴀɴᴅ ᴇᴠᴇʀʏ ʟɪɴᴇ ᴏғ ᴄᴏᴅᴇ ɪs ᴀ sᴛᴇᴘ ɪɴ ᴛʜᴀᴛ ᴅɪʀᴇᴄᴛɪᴏɴ. ❞
+# ❝ ᴛʜᴇ ʙᴇsᴛ ᴡᴀʏ ᴛᴏ ᴘʀᴇᴅɪᴄᴛ ᴛʜᴇ ғᴜᴛᴜʀᴇ ɪs to ɪɴᴠᴇɴᴛ ɪᴛ, ᴀɴᴅ ᴇᴠᴇʀʏ ʟɪɴᴇ ᴏғ ᴄᴏᴅᴇ ɪs ᴀ sᴛᴇᴘ ɪɴ ᴛʜᴀᴛ ᴅɪʀᴇᴄᴛɪᴏɴ. ❞
 
 # --- ʟᴏɢ ᴄʜᴀɴɴᴇʟs ᴄᴏɴғɪɢᴜʀᴀᴛɪᴏɴ ---
 LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1002228337057"))  # ᴜsᴇʀ ᴀᴄᴛɪᴠɪᴛʏ ʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ
@@ -51,10 +51,6 @@ TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "200"))
 #--------------------------------------------
 START_PIC = os.environ.get("START_PIC", "https://image.zaw-myo.workers.dev/image/5ac5d5da-c3e6-4b34-9b75-fefd36a70fb7")
 FORCE_PIC = os.environ.get("FORCE_PIC", "https://telegra.ph/file/e292b12890b8b4b9dcbd1.jpg")
-
-# --- ɴᴇᴡ ᴘɪᴄᴛᴜʀᴇ ᴠᴀʀɪᴀʙʟᴇs ---
-LOG_PIC = os.environ.get("LOG_PIC", "https://telegra.ph/file/e292b12890b8b4b9dcbd1.jpg")       # ʟᴏɢ ᴄʜᴀɴɴᴇʟ ᴘɪᴄ
-PREMIUM_PIC = os.environ.get("PREMIUM_PIC", "https://telegra.ph/file/e292b12890b8b4b9dcbd1.jpg") # ᴘʀᴇᴍɪᴜᴍ ʟᴏɢ ᴘɪᴄ
 #--------------------------------------------
 
 #--------------------------------------------
