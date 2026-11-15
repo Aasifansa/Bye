@@ -22,7 +22,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
     try:
         if data == "help":
             await query.message.edit_text(
-                text=HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() or 'HELP_TXT' in locals() else "<b>Help Menu</b>",
+                text=HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() or 'HELP_TXT' in locals() else "<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>",
                 disable_web_page_preview=True,
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton('ʜᴏᴍᴇ', callback_data='start'),
@@ -32,7 +32,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
         elif data == "about":
             await query.message.edit_text(
-                text=ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() or 'ABOUT_TXT' in locals() else "<b>About Bot</b>",
+                text=ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() or 'ABOUT_TXT' in locals() else "<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>",
                 disable_web_page_preview=True,
                 reply_markup=InlineKeyboardMarkup([
                     [InlineKeyboardButton('ʜᴏᴍᴇ', callback_data='start'),
@@ -41,14 +41,14 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             )
 
         elif data == "start":
-            start_text = START_MSG.format(first=query.from_user.first_name) if 'START_MSG' in globals() or 'START_MSG' in locals() else "<b>Welcome!</b>"
+            start_text = START_MSG.format(first=query.from_user.first_name) if 'START_MSG' in globals() or 'START_MSG' in locals() else "<b>ᴡᴇʟᴄᴏᴍᴇ!</b>"
             await query.message.edit_text(
-                text=start_text + "\n\n<b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴘᴀɪᴅ/ᴠɪᴘ ꜰɪʟᴇ sᴛᴏʀᴇ ʙᴏᴛ. ʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b>",
+                text=start_text + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ. ʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
                 disable_web_page_preview=True,
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", url="https://t.me/mrkillersss"),
-                     InlineKeyboardButton("👤 ᴍʏ ᴘʟᴀɴ", callback_data="my_plan_cb")],
-                    [InlineKeyboardButton("ʜᴇʟᴘ", callback_data='help'),
+                    [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ", url="https://t.me/mrkillersss"),
+                     InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
+                    [InlineKeyboardButton("ʜᴇʟᴩ", callback_data='help'),
                      InlineKeyboardButton("ᴀʙᴏᴜᴛ", callback_data='about')],
                     [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
                 ])
@@ -63,17 +63,17 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 hours_left = time_left.seconds // 3600
                 
                 text = (
-                    f"<b>🌟 Your VIP Subscription Status 🌟</b>\n\n"
-                    f"<b>• Plan Type:</b> <code>VIP Paid Member</code>\n"
-                    f"<b>• Status:</b> <code>Active ✅</code>\n"
-                    f"<b>• Time Remaining:</b> <code>{days_left} Days, {hours_left} Hours</code>\n"
-                    f"<b>• Expiry Date (UTC):</b> <code>{expiry.strftime('%Y-%m-%d %H:%M:%S')}</code>"
+                    f"<b>🌟 ʏᴏᴜʀ ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ ꜱᴛᴀᴛᴜꜱ 🌟</b>\n\n"
+                    f"<blockquote><b>• ᴩʟᴀɴ ᴛyᴩᴇ:</b> <code>ᴠɪᴩ ᴩᴀɪᴅ ᴍᴇᴍʙᴇʀ</code>\n"
+                    f"<b>• ꜱᴛᴀᴛᴜꜱ:</b> <code>ᴀᴄᴛɪᴠᴇ ✅</code>\n"
+                    f"<b>• ᴛɪᴍᴇ ʀᴇᴍᴀɪɴɪɴɢ:</b> <code>{days_left} ᴅᴀyꜱ, {hours_left} ʜᴏᴜʀꜱ</code>\n"
+                    f"<b>• ᴇxᴩɪʀy ᴅᴀᴛᴇ (ᴜᴛᴄ):</b> <code>{expiry.strftime('%Y-%m-%d %H:%M:%S')}</code></blockquote>"
                 )
             else:
                 text = (
-                    f"<b>👤 Your Account Plan:</b> <code>Free / Unpaid User</code>\n\n"
-                    f"<b>❌ Status:</b> <code>No Active Subscription ⚠️</code>\n\n"
-                    f"<i>Aapke paas koi active VIP plan nahi hai. Files download karne ke liye please VIP Access purchase karein.</i>"
+                    f"<b>👤 ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ᴩʟᴀɴ:</b> <code>ꜰʀᴇᴇ / ᴜɴᴩᴀɪᴅ ᴜꜱᴇʀ</code>\n\n"
+                    f"<blockquote><b>❌ ꜱᴛᴀᴛᴜꜱ:</b> <code>ɴᴏ ᴀᴄᴛɪᴠᴇ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ ⚠️</code>\n\n"
+                    f"<i>ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴋᴏɪ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴩʟᴀɴ ɴᴀʜɪ ʜᴀɪ. ꜰɪʟᴇꜱ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴩʟᴇᴀꜱᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴩᴜʀᴄʜᴀꜱᴇ ᴋᴀʀᴇɪɴ.</i></blockquote>"
                 )
             
             await query.answer(text, show_alert=True)
@@ -91,18 +91,18 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             try:
                 chat = await client.get_chat(cid)
                 mode = await db.get_channel_mode(cid)
-                status = "🟢 ᴏɴ" if mode == "on" else "🔴 ᴏғғ"
-                new_mode = "ᴏғғ" if mode == "on" else "on"
+                status = "🟢 ᴏɴ" if mode == "on" else "🔴 ᴏꜰꜰ"
+                new_mode = "ᴏꜰꜰ" if mode == "on" else "on"
                 buttons = [
-                    [InlineKeyboardButton(f"ʀᴇǫ ᴍᴏᴅᴇ {'OFF' if mode == 'on' else 'ON'}", callback_data=f"rfs_toggle_{cid}_{new_mode}")],
+                    [InlineKeyboardButton(f"ʀᴇq ᴍᴏᴅᴇ {'OFF' if mode == 'on' else 'ON'}", callback_data=f"rfs_toggle_{cid}_{new_mode}")],
                     [InlineKeyboardButton("‹ ʙᴀᴄᴋ", callback_data="fsub_back")]
                 ]
                 await query.message.edit_text(
-                    f"Channel: {chat.title}\nCurrent Force-Sub Mode: {status}",
+                    f"<blockquote><b>ᴄʜᴀɴɴᴇʟ:</b> {chat.title}\n<b>ᴄᴜʀʀᴇɴᴛ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b> {status}</blockquote>",
                     reply_markup=InlineKeyboardMarkup(buttons)
                 )
             except Exception:
-                await query.answer("Failed to fetch channel info", show_alert=True)
+                await query.answer("ꜰᴀɪʟᴇᴅ ᴛᴏ ꜰᴇᴛᴄʜ ᴄʜᴀɴɴᴇʟ ɪɴꜰᴏ", show_alert=True)
 
         elif data.startswith("rfs_toggle_"):
             cid, action = data.split("_")[2:]
@@ -110,17 +110,17 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             mode = "on" if action == "on" else "off"
 
             await db.set_channel_mode(cid, mode)
-            await query.answer(f"Force-Sub set to {'ON' if mode == 'on' else 'OFF'}")
+            await query.answer(f"ꜰᴏʀᴄᴇ-ꜱᴜʙ ꜱᴇᴛ ᴛᴏ {'ON' if mode == 'on' else 'OFF'}")
 
             chat = await client.get_chat(cid)
-            status = "🟢 ON" if mode == "on" else "🔴 OFF"
+            status = "🟢 ᴏɴ" if mode == "on" else "🔴 ᴏꜰꜰ"
             new_mode = "off" if mode == "on" else "on"
             buttons = [
-                [InlineKeyboardButton(f"ʀᴇǫ ᴍᴏᴅᴇ {'OFF' if mode == 'on' else 'ON'}", callback_data=f"rfs_toggle_{cid}_{new_mode}")],
+                [InlineKeyboardButton(f"ʀᴇq ᴍᴏᴅᴇ {'OFF' if mode == 'on' else 'ON'}", callback_data=f"rfs_toggle_{cid}_{new_mode}")],
                 [InlineKeyboardButton("‹ ʙᴀᴄᴋ", callback_data="fsub_back")]
             ]
             await query.message.edit_text(
-                f"Channel: {chat.title}\nCurrent Force-Sub Mode: {status}",
+                f"<blockquote><b>ᴄʜᴀɴɴᴇʟ:</b> {chat.title}\n<b>ᴄᴜʀʀᴇɴᴛ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b> {status}</blockquote>",
                 reply_markup=InlineKeyboardMarkup(buttons)
             )
 
@@ -137,14 +137,14 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     continue
 
             await query.message.edit_text(
-                "sᴇʟᴇᴄᴛ ᴀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴛᴏɢɢʟᴇ ɪᴛs ғᴏʀᴄᴇ-sᴜʙ ᴍᴏᴅᴇ:",
+                "<blockquote><b>ꜱᴇʟᴇᴄᴛ ᴀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴛᴏɢɢʟᴇ ɪᴛꜱ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b></blockquote>",
                 reply_markup=InlineKeyboardMarkup(buttons)
             )
 
     except Exception as e:
         print(f"[CB ERROR]: {e}")
         try:
-            await query.answer("Something went wrong!", show_alert=True)
+            await query.answer("ꜱᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ wʀᴏɴɢ!", show_alert=True)
         except:
             pass
-            
+    
