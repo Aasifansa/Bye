@@ -77,6 +77,9 @@ CMD_TXT = """<blockquote><b>» ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴْدs:</b></blockq
 <b>›› /add_admin :</b> ᴀᴅᴅ ᴀɴ ᴀᴅᴍɪɴ
 <b>›› /deladmin :</b> ʀᴇᴍᴏᴠᴇ ᴀɴ ᴀᴅᴍɪɴ
 <b>›› /admins :</b> ɢᴇᴛ ʟɪsᴛ ᴏꜰ ᴀᴅᴍɪɴs
+<b>›› /add_premium :</b> ᴀᴅᴅ ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴛᴏ ᴜsᴇʀ
+<b>›› /remove_premium :</b> ʀᴇᴍᴏᴠᴇ ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ
+<b>›› /premium_users :</b> ᴠɪᴇᴡ ᴀʟʟ ᴘʀᴇᴍɪᴜᴍ ᴜsᴇʀs
 """
 #--------------------------------------------
 CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<b>• ʙʏ @Mrkillersss</b>") #set your Custom Caption here, Keep None for Disable Custom Caption
