@@ -123,3 +123,64 @@ async def get_admins(client: Client, message: Message):
 
     reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("ᴄʟᴏsᴇ", callback_data="close")]])
     await pro.edit(f"<b>⚡ Current Admin List:</b>\n\n{admin_list}", reply_markup=reply_markup)
+
+
+# --- Premium User Management Commands ---
+
+@Bot.on_message(filters.command('add') & filters.private & admin)
+async def add_premium_user(client: Client, message: Message):
+    pro = await message.reply("<b><i>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ..</i></b>", quote=True)
+    args = message.text.split()[1:]
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("ᴄʟᴏsᴇ", callback_data="close")]])
+
+    if not args:
+        return await pro.edit(
+            "<b>Please provide a user ID to add to Premium.</b>\n\n"
+            "<b>Usage:</b>\n"
+            "<code>/add [user_id]</code>",
+            reply_markup=reply_markup
+        )
+
+    try:
+        user_id = int(args[0])
+    except ValueError:
+        return await pro.edit("<b>❌ Invalid User ID! Please provide a numeric user ID.</b>", reply_markup=reply_markup)
+
+    try:
+        # Agar aapke database mein premium add karne ka function hai toh yahan call hoga
+        if hasattr(db, 'add_premium'):
+            await db.add_premium(user_id)
+        
+        await pro.edit(f"<b>✅ Successfully added user <code>{user_id}</code> to Premium!</b>", reply_markup=reply_markup)
+    except Exception as e:
+        await pro.edit(f"<b>❌ Error:</b> <code>{e}</code>", reply_markup=reply_markup)
+
+
+@Bot.on_message(filters.command('remove_premium') & filters.private & admin)
+async def remove_premium_user(client: Client, message: Message):
+    pro = await message.reply("<b><i>ᴘʟᴇᴀsᴇ ᴡᴀɪᴛ..</i></b>", quote=True)
+    args = message.text.split()[1:]
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("ᴄʟᴏsᴇ", callback_data="close")]])
+
+    if not args:
+        return await pro.edit(
+            "<b>Please provide a user ID to remove from Premium.</b>\n\n"
+            "<b>Usage:</b>\n"
+            "<code>/remove_premium [user_id]</code>",
+            reply_markup=reply_markup
+        )
+
+    try:
+        user_id = int(args[0])
+    except ValueError:
+        return await pro.edit("<b>❌ Invalid User ID! Please provide a numeric user ID.</b>", reply_markup=reply_markup)
+
+    try:
+        # Agar database mein remove premium ka function hai toh yahan call hoga
+        if hasattr(db, 'remove_premium'):
+            await db.remove_premium(user_id)
+        
+        await pro.edit(f"<b>⛔️ Successfully removed user <code>{user_id}</code> from Premium.</b>", reply_markup=reply_markup)
+    except Exception as e:
+        await pro.edit(f"<b>❌ Error:</b> <code>{e}</code>", reply_markup=reply_markup)
+    
