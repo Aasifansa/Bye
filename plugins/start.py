@@ -27,7 +27,7 @@ from helper_func import *
 from database.database import *
 
 BAN_SUPPORT = f"{BAN_SUPPORT}"
-PAYMENT_LINK = "https://t.me/rohit_1888" # Yahan apna payment link ya QR chat link daalein
+PAYMENT_LINK = "https://t.me/mrkillersss" # Yahan apna payment link ya QR chat link daalein
 
 @Bot.on_message(filters.command('start') & filters.private)
 async def start_command(client: Client, message: Message):
@@ -37,10 +37,10 @@ async def start_command(client: Client, message: Message):
     banned_users = await db.get_ban_users()
     if user_id in banned_users:
         return await message.reply_text(
-            "<b>⛔️ You are Bᴀɴɴᴇᴅ from using this bot.</b>\n\n"
-            "<i>Contact support if you think this is a mistake.</i>",
+            "<blockquote><b>⛔️ yᴏᴜ ᴀʀᴇ ʙᴀɴɴᴇᴅ ꜰʀᴏᴍ ᴜꜱɪɴɢ ᴛʜɪꜱ ʙᴏᴛ.</b>\n\n"
+            "<i>ᴄᴏɴᴛᴀᴄᴛ ꜱᴜᴩᴩᴏʀᴛ ɪꜰ yᴏᴜ ᴛʜɪɴᴋ ᴛʜɪꜱ ɪꜱ ᴀ ᴍɪꜱᴛᴀᴋᴇ.</i></blockquote>",
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Contact Support", url=BAN_SUPPORT)]]
+                [[InlineKeyboardButton("🆘 ᴄᴏɴᴛᴀᴄᴛ ꜱᴜᴩᴩᴏʀᴛ", url=BAN_SUPPORT)]]
             )
         )
         
@@ -64,13 +64,13 @@ async def start_command(client: Client, message: Message):
         # Agar user ke paas paid access nahi hai aur wo admin bhi nahi hai
         if not is_active and user_id not in ADMINS:
             return await message.reply_text(
-                "<b>⛔️ Paid Access Required!</b>\n\n"
-                "<i>Ye bot ab <b>Paid</b> ho chuka hai. Files ko download karne ke liye aapke paas active <b>VIP Subscription</b> hona chahiye.</i>",
+                "<blockquote><b>⛔️ ᴩᴀɪᴅ ᴀᴄᴄᴇꜱꜱ ʀᴇqᴜɪʀᴇᴅ!</b>\n\n"
+                "<i>ʏᴇ ʙᴏᴛ ᴀʙ <b>ᴩᴀɪᴅ</b> ʜᴏ 🫥ᴜᴋᴀ ʜᴀɪ. ꜰɪʟᴇꜱ ᴋᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴀᴄᴛɪᴠᴇ <b>ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ</b> ʜᴏɴᴀ ᴄʜᴀʜɪyᴇ.</i></blockquote>",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("💎 Buy VIP Access (Plans)", url=PAYMENT_LINK)],
-                        [InlineKeyboardButton("👤 Check My Plan", callback_data="my_plan_cb")],
-                        [InlineKeyboardButton("❌ Close", callback_data="close")]
+                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK)],
+                        [InlineKeyboardButton("👤 ᴄʜᴇᴄᴋ ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
+                        [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
                     ]
                 )
             )
@@ -100,11 +100,11 @@ async def start_command(client: Client, message: Message):
                 print(f"Error decoding ID: {e}")
                 return
 
-        temp_msg = await message.reply("<b>Please wait...</b>")
+        temp_msg = await message.reply("<b>ᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ...</b>")
         try:
             messages = await get_messages(client, ids)
         except Exception as e:
-            await message.reply_text("Something went wrong!")
+            await message.reply_text("ꜱᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ ᴡʀᴏɴɢ!")
             print(f"Error getting messages: {e}")
             return
         finally:
@@ -122,7 +122,7 @@ async def start_command(client: Client, message: Message):
             reply_markup = InlineKeyboardMarkup(
                 [
                     [
-                        InlineKeyboardButton("📤 sʜᴀʀᴇ ғɪʟᴇ", url=share_url),
+                        InlineKeyboardButton("📤 ꜱʜᴀʀᴇ ꜰɪʟᴇ", url=share_url),
                         InlineKeyboardButton("🗑️ ᴅᴇʟᴇᴛᴇ", callback_data="close")
                     ]
                 ]
@@ -144,7 +144,7 @@ async def start_command(client: Client, message: Message):
         FILE_AUTO_DELETE = await db.get_del_timer()
         if FILE_AUTO_DELETE > 0:
             notification_msg = await message.reply(
-                f"<b>Tʜɪs Fɪʟᴇ ᴡɪʟʟ ʙᴇ Dᴇʟᴇᴛᴇᴅ ɪɴ  {get_exp_time(FILE_AUTO_DELETE)}. Pʟᴇᴀsᴇ sᴀᴠᴇ ᴏʀ ғᴏʀᴡᴀʀᴅ ɪᴛ ᴛᴏ ʏᴏᴜʀ sᴀᴠᴇᴅ ᴍᴇssᴀɢᴇs ʙᴇғᴏʀᴇ ɪᴛ ɢᴇᴛs Dᴇʟᴇᴛᴇᴅ.</b>"
+                f"<blockquote><b>⏳ ᴛʜɪꜱ ꜰɪʟᴇ ᴡɪʟʟ ʙᴇ ᴅᴇʟᴇᴛᴇᴅ ɪɴ {get_exp_time(FILE_AUTO_DELETE)}.\nᴩʟᴇᴀꜱᴇ ꜱᴀᴠᴇ ᴏʀ ꜰᴏʀᴡᴀʀᴅ ɪᴛ ᴛᴏ yᴏᴜʀ ꜱᴀᴠᴇᴅ ᴍᴇꜱꜱᴀɢᴇꜱ ʙᴇꜰᴏʀᴇ ɪᴛ ɢᴇᴛꜱ ᴅᴇʟᴇᴛᴇᴅ.</b></blockquote>"
             )
 
             await asyncio.sleep(FILE_AUTO_DELETE)
@@ -164,13 +164,13 @@ async def start_command(client: Client, message: Message):
                 )
                 keyboard = InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("♻️ ɢᴇᴛ ғɪʟᴇ ᴀɢᴀɪɴ!", url=reload_url)],
-                        [InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
+                        [InlineKeyboardButton("♻️ ɢᴇᴛ ꜰɪʟᴇ ᴀɢᴀɪɴ!", url=reload_url)],
+                        [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
                     ]
                 ) if reload_url else None
 
                 await notification_msg.edit(
-                    "<b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!\n\nᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛ𝑡ᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ 👇</b>",
+                    "<blockquote><b>ʏᴏᴜʀ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!\n\nᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ᴅᴇʟᴇᴛᴇᴅ ᴠɪᴅᴇᴏ / ꜰɪʟᴇ 👇</b></blockquote>",
                     reply_markup=keyboard
                 )
             except Exception as e:
@@ -180,19 +180,19 @@ async def start_command(client: Client, message: Message):
         reply_markup = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇss", url=PAYMENT_LINK),
-                    InlineKeyboardButton("👤 ᴍʏ ᴘʟᴀɴ", callback_data="my_plan_cb")
+                    InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK),
+                    InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")
                 ],
                 [
-                    InlineKeyboardButton("📢 ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ", url="https://t.me/Sofi_Backup"),
-                    InlineKeyboardButton("🆘 sᴜᴘᴘᴏʀᴛ", url=BAN_SUPPORT)
+                    InlineKeyboardButton("📢 ᴜᴩᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Sofi_Backup"),
+                    InlineKeyboardButton("🆘 ꜱᴜᴩᴩᴏʀᴛ", url=BAN_SUPPORT)
                 ],
                 [
                     InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data="about"),
-                    InlineKeyboardButton("📚 ʜᴇʟᴘ", callback_data="help")
+                    InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data="help")
                 ],
                 [
-                    InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")
+                    InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")
                 ]
             ]
         )
@@ -204,7 +204,7 @@ async def start_command(client: Client, message: Message):
                 username=None if not message.from_user.username else '@' + message.from_user.username,
                 mention=message.from_user.mention,
                 id=message.from_user.id
-            ) + "\n\n<b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴘᴀɪᴅ/ᴠɪᴘ ꜰɪʟᴇ sᴛᴏʀᴇ ʙᴏᴛ. ʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴘ ᴀᴄᴄᴇss ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b>",
+            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
             reply_markup=reply_markup,
             message_effect_id=5104841245755180586)  # 🔥
         
@@ -218,7 +218,7 @@ async def start_command(client: Client, message: Message):
 chat_data_cache = {}
 
 async def not_joined(client: Client, message: Message):
-    temp = await message.reply("<b><i>ᴡᴀɪᴛ ᴀ sᴇᴄ..</i></b>")
+    temp = await message.reply("<b><i>ᴡᴀɪᴛ ᴀ ꜱᴇᴄ..</i></b>")
 
     user_id = message.from_user.id
     buttons = []
@@ -264,22 +264,29 @@ async def not_joined(client: Client, message: Message):
                 except Exception as e:
                     print(f"Error with chat {chat_id}: {e}")
                     return await temp.edit(
-                        f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @mrkillersss</i></b>\n"
-                        f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
+                        f"<b><i>! ᴇʀʀᴏʀ, ᴄᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴩᴇʀ ᴛᴏ ꜱᴏʟᴠᴇ ᴛʜᴇ ɪꜱꜱᴜᴇꜱ @mrkillersss</i></b>\n"
+                        f"<blockquote expandable><b>ʀᴇᴀꜱᴏɴ:</b> {e}</blockquote>"
                     )
 
+        # Safe handling for Try Again button parameter
         try:
+            if message.command and len(message.command) > 1:
+                arg_param = message.command[1]
+                retry_url = f"https://t.me/{client.username}?start={arg_param}"
+            else:
+                retry_url = f"https://t.me/{client.username}"
+
             buttons.append([
                 InlineKeyboardButton(
-                    text='♻️ Tʀʏ Aɢᴀɪɴ',
-                    url=f"https://t.me/{client.username}?start={message.command[1]}"
+                    text='♻️ ᴛʀy ᴀɢᴀɪɴ',
+                    url=retry_url
                 ),
                 InlineKeyboardButton(
-                    text='❓ Hᴏᴡ ᴛᴏ Jᴏɪɴ',
+                    text='❓ ʜᴏᴡ ᴛᴏ ᴊᴏɪɴ',
                     callback_data='help'
                 )
             ])
-        except IndexError:
+        except Exception:
             pass
 
         await temp.delete()
@@ -298,8 +305,8 @@ async def not_joined(client: Client, message: Message):
     except Exception as e:
         print(f"Final Error: {e}")
         await temp.edit(
-            f"<b><i>! Eʀʀᴏʀ, Cᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ ᴛᴏ sᴏʟᴠᴇ ᴛʜᴇ ɪssᴜᴇs @mrkillersss</i></b>\n"
-            f"<blockquote expandable><b>Rᴇᴀsᴏɴ:</b> {e}</blockquote>"
+            f"<b><i>! ᴇʀʀᴏʀ, ᴄᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴩᴇʀ ᴛᴏ ꜱᴏʟᴠᴇ ᴛʜᴇ ɪꜱꜱᴜᴇꜱ @mrkillersss</i></b>\n"
+            f"<blockquote expandable><b>ʀᴇᴀꜱᴏɴ:</b> {e}</blockquote>"
         )
 
 #=====================================================================================##
@@ -308,8 +315,9 @@ async def not_joined(client: Client, message: Message):
 async def bcmd(bot: Bot, message: Message):        
     reply_markup = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("• ᴀʙᴏᴜᴛ •", callback_data="about"), InlineKeyboardButton("• ʜᴇʟᴘ •", callback_data="help")],
-            [InlineKeyboardButton("• ᴄʟᴏsᴇ •", callback_data="close")]
+            [InlineKeyboardButton("• ᴀʙᴏᴜᴛ •", callback_data="about"), InlineKeyboardButton("• ʜᴇʟᴩ •", callback_data="help")],
+            [InlineKeyboardButton("• ᴄʟᴏꜱᴇ •", callback_data="close")]
         ]
     )
     await message.reply(text=CMD_TXT, reply_markup=reply_markup, quote=True)
+    
