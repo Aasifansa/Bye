@@ -1,6 +1,6 @@
 import asyncio
 
-# Python ke event loop ke liye
+# Python 3.14 ke liye MainThread par event loop manually set karein
 try:
     asyncio.get_event_loop()
 except RuntimeError:
@@ -9,7 +9,6 @@ except RuntimeError:
 
 from bot import Bot
 import pyrogram.utils
-import cbb  # 👈 Ye zaroori hai taaki buttons (cbb.py) load ho sakein
 
 pyrogram.utils.MIN_CHANNEL_ID = -1009147483647
 
