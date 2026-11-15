@@ -3,6 +3,7 @@ import os
 import random
 import sys
 import time
+from datetime import datetime, timedelta
 from pyrogram import Client, filters, __version__
 from pyrogram.enums import ParseMode, ChatAction, ChatMemberStatus, ChatType
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, ChatMemberUpdated, ChatPermissions
@@ -147,10 +148,36 @@ async def add_premium_user(client: Client, message: Message):
         return await pro.edit("<b>❌ Invalid User ID! Please provide a numeric user ID.</b>", reply_markup=reply_markup)
 
     try:
-        # Agar aapke database mein premium add karne ka function hai toh yahan call hoga
+        # Database mein premium add karne ka function call
         if hasattr(db, 'add_premium'):
             await db.add_premium(user_id)
         
+        # Target user ki details fetch karne ki koshish
+        try:
+            target_user = await client.get_users(user_id)
+        except:
+            target_user = message.from_user
+
+        # --- Premium Verification Log Details ---
+        joined_date = datetime.now().strftime("%d-%b-%Y")
+        expire_date = (datetime.now() + timedelta(days=30)).strftime("%d-%b-%Y") # Default 30 Days expiry
+
+        premium_log_text = (
+            f"<b>⚡ #PREMIUM_USER_ADDED</b>\n\n"
+            f"<b>👤 User Name:</b> {target_user.mention}\n"
+            f"<b>🆔 User ID:</b> <code>{target_user.id}</code>\n"
+            f"<b>🌐 Username:</b> @{target_user.username or 'None'}\n"
+            f"<b>💎 Status:</b> <code>VIP Premium Activated</code>\n"
+            f"<b>📅 Joined/Activated Date:</b> <code>{joined_date}</code>\n"
+            f"<b>⏳ Expire Date:</b> <code>{expire_date}</code>\n"
+            f"<b>🛠️ Added By Admin:</b> {message.from_user.mention}"
+        )
+
+        try:
+            await client.send_photo(PREMIUM_LOG_CHANNEL, photo=PREMIUM_PIC, caption=premium_log_text)
+        except Exception as log_err:
+            print(f"Premium Log Error: {log_err}")
+
         await pro.edit(f"<b>✅ Successfully added user <code>{user_id}</code> to Premium!</b>", reply_markup=reply_markup)
     except Exception as e:
         await pro.edit(f"<b>❌ Error:</b> <code>{e}</code>", reply_markup=reply_markup)
@@ -176,11 +203,10 @@ async def remove_premium_user(client: Client, message: Message):
         return await pro.edit("<b>❌ Invalid User ID! Please provide a numeric user ID.</b>", reply_markup=reply_markup)
 
     try:
-        # Agar database mein remove premium ka function hai toh yahan call hoga
+        # Database se remove premium function call
         if hasattr(db, 'remove_premium'):
             await db.remove_premium(user_id)
         
         await pro.edit(f"<b>⛔️ Successfully removed user <code>{user_id}</code> from Premium.</b>", reply_markup=reply_markup)
     except Exception as e:
         await pro.edit(f"<b>❌ Error:</b> <code>{e}</code>", reply_markup=reply_markup)
-    
