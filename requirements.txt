@@ -1,12 +1,17 @@
-pyrofork==2.3.45 
+# --- Pyrofork & Telegram Core ---
+Pyrofork==2.3.45
 TgCrypto
+
+# --- Task Scheduling ---
 schedule
 APScheduler
-# --- For-Database ------------ #
+
+# --- Database (MongoDB & Async) ---
 pymongo
 motor
 dnspython
-# --- For-Web-Response ------- #
+
+# --- Web Response & Utilities ---
 aiohttp
 python-dotenv
 pytz
