@@ -1,3 +1,5 @@
+# Don't Remove Credit @CodeFlix_Bots, @rohit_1888
+# Ask Doubt on telegram @CodeflixSupport
 #
 # Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
 #
@@ -14,15 +16,18 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from database.database import *
 from datetime import datetime
 
+PAYMENT_LINK = "https://t.me/mrkillersss" # Admin DM link jahan payment screenshot bhejna hai
+PAYMENT_QR = "https://image.zaw-myo.workers.dev/image/db8410f2-94c7-41ab-acdc-e7e319b0e663"
+
 async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMarkup):
     try:
         if query.message.photo:
-            await query.message.edit_caption(caption=text, reply_markup=reply_markup)
+            await query.message.edit_caption(caption=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
         else:
-            await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup)
+            await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
     except Exception:
         try:
-            await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup)
+            await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
         except Exception as e:
             print(f"Smart Edit Error: {e}")
 
@@ -64,41 +69,125 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 id=query.from_user.id
             ) if 'START_MSG' in globals() or 'START_MSG' in locals() else f"<b>ᴡᴇʟᴄᴏᴍᴇ {query.from_user.first_name}!</b>"
 
-            await smart_edit(
-                query,
-                text=start_text + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ. ʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ", url="https://t.me/mrkillersss"),
-                     InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
-                    [InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data='help'),
-                     InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data='about')],
-                    [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
-                ])
+            start_full_text = start_text + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ. ʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>"
+
+            try:
+                if query.message.photo:
+                    await query.message.edit_caption(
+                        caption=start_full_text,
+                        reply_markup=InlineKeyboardMarkup([
+                            [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", callback_data="buy_vip_cb"),
+                             InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
+                            [InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data='help'),
+                             InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data='about')],
+                            [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
+                        ])
+                    )
+                else:
+                    await query.message.delete()
+                    await client.send_photo(
+                        chat_id=query.message.chat.id,
+                        photo=START_PIC,
+                        caption=start_full_text,
+                        reply_markup=InlineKeyboardMarkup([
+                            [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", callback_data="buy_vip_cb"),
+                             InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
+                            [InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data='help'),
+                             InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data='about')],
+                            [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
+                        ])
+                    )
+            except Exception:
+                await smart_edit(
+                    query,
+                    text=start_full_text,
+                    reply_markup=InlineKeyboardMarkup([
+                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", callback_data="buy_vip_cb"),
+                         InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
+                        [InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data='help'),
+                         InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data='about')],
+                        [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
+                    ])
+                )
+
+        elif data == "buy_vip_cb":
+            plans_markup = InlineKeyboardMarkup(
+                [
+                    [InlineKeyboardButton("⚡ 7 ᴅᴀʏꜱ (₹30)", callback_data="plan_7d"), InlineKeyboardButton("⚡ 15 ᴅᴀʏꜱ (₹50)", callback_data="plan_15d")],
+                    [InlineKeyboardButton("⚡ 1 ᴍᴏɴᴛʜ (₹90)", callback_data="plan_1m"), InlineKeyboardButton("⚡ 3 ᴍᴏɴᴛʜꜱ (₹220)", callback_data="plan_3m")],
+                    [InlineKeyboardButton("⚡ ʟɪꜰᴇᴛɪᴍᴇ (₹499)", callback_data="plan_life")],
+                    [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
+                ]
             )
+            text = "<blockquote><b>💎 ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴꜱ & ᴘʀɪᴄɪɴɢ 💎</b>\n\n<i>Kripya niche se apna pasandida plan select karein:</i></blockquote>"
+            await smart_edit(query, text=text, reply_markup=plans_markup)
+
+        elif data.startswith("plan_"):
+            plan_info = {
+                "plan_7d": ("7 Days Plan", "₹30"),
+                "plan_15d": ("15 Days Plan", "₹50"),
+                "plan_1m": ("1 Month Plan", "₹90"),
+                "plan_3m": ("3 Months Plan", "₹220"),
+                "plan_life": ("Lifetime Plan", "₹499")
+            }
+            plan_name, plan_price = plan_info.get(data, ("VIP Plan", "As per chart"))
+            
+            caption_text = (
+                f"<blockquote><b>💎 ꜱᴇʟᴇᴄᴛᴇᴅ ᴘʟᴀɴ ᴅᴇᴛᴀɪʟꜱ:</b>\n\n"
+                f"<b>📦 ᴘʟᴀɴ:</b> <code>{plan_name}</code>\n"
+                f"<b>💰 ᴘʀɪᴄᴇ:</b> <code>{plan_price}</code>\n\n"
+                f"<b>📌 ᴘᴀʏᴍᴇɴᴛ ɪɴꜱᴛʀᴜᴄᴛɪᴏɴꜱ:</b>\n"
+                f"1. <i>Niche diye gaye QR code ko scan karke payment karein.</i>\n"
+                f"2. <i>Payment successful hone ke baad screenshot admin ko bhejein.</i></blockquote>"
+            )
+            
+            qr_markup = InlineKeyboardMarkup(
+                [
+                    [InlineKeyboardButton("💳 ꜱᴇɴᴅ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ᴛᴏ ᴀᴅᴍɪɴ", url=PAYMENT_LINK)],
+                    [InlineKeyboardButton("◀️ ʙᴀᴄᴋ ᴛᴏ ᴘʟᴀɴꜱ", callback_data="buy_vip_cb"), InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
+                ]
+            )
+            
+            try:
+                await query.message.delete()
+                await client.send_photo(
+                    chat_id=query.message.chat.id,
+                    photo=PAYMENT_QR,
+                    caption=caption_text,
+                    reply_markup=qr_markup,
+                    parse_mode=ParseMode.HTML
+                )
+            except Exception as e:
+                await query.answer(f"Error: {e}", show_alert=True)
 
         elif data == "my_plan_cb":
             is_active, expiry = await db.check_paid_access(user_id)
+            plan_markup = InlineKeyboardMarkup(
+                [
+                    [InlineKeyboardButton("💎 ʙᴜʏ / ᴜᴘɢʀᴀᴅᴇ ᴘʟᴀɴ", callback_data="buy_vip_cb")],
+                    [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
+                ]
+            )
             
             if is_active and expiry:
-                time_left = expiry - datetime.utcnow()
-                days_left = time_left.days
-                hours_left = time_left.seconds // 3600
+                if isinstance(expiry, datetime):
+                    exp_str = expiry.strftime("%d-%b-%Y | %I:%M %p")
+                else:
+                    exp_str = str(expiry)
                 
                 text = (
-                    f"🌟 ʏᴏᴜʀ ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ ꜱᴛᴀᴛᴜꜱ 🌟\n\n"
-                    f"• ᴩʟᴀɴ: ᴠɪᴩ ᴩᴀɪᴅ ᴍᴇᴍʙᴇʀ\n"
-                    f"• ꜱᴛᴀᴛᴜꜱ: ᴀᴄᴛɪᴠᴇ ✅\n"
-                    f"• ᴛɪᴍᴇ ʟᴇꜰᴛ: {days_left} ᴅᴀyꜱ, {hours_left} ʜᴏᴜʀꜱ\n"
-                    f"• ᴇxᴩɪʀy (ᴜᴛᴄ): {expiry.strftime('%Y-%m-%d %H:%M')}"
+                    f"<blockquote><b>💎 ʏᴏᴜʀ ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ ɪꜱ ᴀᴄᴛɪᴠᴇ!</b>\n\n"
+                    f"<b>👤 ᴜꜱᴇʀ:</b> {query.from_user.mention}\n"
+                    f"<b>🆔 ɪᴅ:</b> <code>{user_id}</code>\n"
+                    f"<b>⏳ ᴇxᴘɪʀʏ:</b> <code>{exp_str}</code></blockquote>"
                 )
             else:
                 text = (
-                    f"👤 ᴀᴄᴄᴏᴜɴᴛ ᴩʟᴀɴ: ꜰʀᴇᴇ / ᴜɴᴩᴀɪᴅ\n\n"
-                    f"❌ ꜱᴛᴀᴛᴜꜱ: ɴᴏ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ ⚠️\n\n"
-                    f"ꜰɪʟᴇꜱ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴩʟᴇᴀꜱᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴩᴜʀᴄʜᴀꜱᴇ ᴋᴀʀᴇɪɴ."
+                    f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.</b>\n\n"
+                    f"<i>ɴɪᴄʜᴇ ʙᴜᴛᴛᴏɴ ᴘᴀʀ ᴄʟɪᴄᴋ ᴋᴀʀᴋᴇ ᴘʟᴀɴꜱ & ᴘʀɪᴄᴇ ᴅᴇᴋʜᴇɪɴ!</i></blockquote>"
                 )
             
-            await query.answer(text, show_alert=True)
+            await smart_edit(query, text=text, reply_markup=plan_markup)
 
         elif data == "close":
             try:
@@ -121,7 +210,8 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 ]
                 await query.message.edit_text(
                     f"<blockquote><b>ᴄʜᴀɴɴᴇʟ:</b> {chat.title}\n<b>ᴄᴜʀʀᴇɴᴛ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b> {status}</blockquote>",
-                    reply_markup=InlineKeyboardMarkup(buttons)
+                    reply_markup=InlineKeyboardMarkup(buttons),
+                    parse_mode=ParseMode.HTML
                 )
             except Exception:
                 await query.answer("ꜰᴀɪʟᴇᴅ ᴛᴏ ꜰᴇᴛᴄʜ ᴄʜᴀɴɴᴇʟ ɪɴꜰᴏ", show_alert=True)
@@ -143,7 +233,8 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             ]
             await query.message.edit_text(
                 f"<blockquote><b>ᴄʜᴀɴɴᴇʟ:</b> {chat.title}\n<b>ᴄᴜʀʀᴇɴᴛ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b> {status}</blockquote>",
-                reply_markup=InlineKeyboardMarkup(buttons)
+                reply_markup=InlineKeyboardMarkup(buttons),
+                parse_mode=ParseMode.HTML
             )
 
         elif data == "fsub_back":
@@ -160,7 +251,8 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
             await query.message.edit_text(
                 "<blockquote><b>ꜱᴇʟᴇᴄᴛ ᴀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴛᴏɢɢʟᴇ ɪᴛꜱ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b></blockquote>",
-                reply_markup=InlineKeyboardMarkup(buttons)
+                reply_markup=InlineKeyboardMarkup(buttons),
+                parse_mode=ParseMode.HTML
             )
 
     except Exception as e:
@@ -169,4 +261,4 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-    
+                     
