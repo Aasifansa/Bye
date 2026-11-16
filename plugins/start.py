@@ -1,14 +1,5 @@
 # Don't Remove Credit @CodeFlix_Bots, @rohit_1888
 # Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
-#
 
 import asyncio
 import os
@@ -18,7 +9,7 @@ import time
 from datetime import datetime, timedelta
 from pyrogram import Client, filters, __version__
 from pyrogram.enums import ParseMode, ChatAction
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, ChatInviteLink, ChatPrivileges, InputMediaPhoto
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, ChatInviteLink, ChatPrivileges
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 from bot import Bot
@@ -28,8 +19,6 @@ from database.database import *
 
 BAN_SUPPORT = f"{BAN_SUPPORT}"
 PAYMENT_LINK = "https://t.me/mrkillersss" 
-PAYMENT_QR = "https://image.zaw-myo.workers.dev/image/db8410f2-94c7-41ab-acdc-e7e319b0e663"
-
 
 def get_start_keyboard():
     return InlineKeyboardMarkup(
@@ -51,7 +40,6 @@ def get_start_keyboard():
             ]
         ]
     )
-
 
 @Bot.on_message(filters.command(['plan', 'myplan']) & filters.private)
 async def check_user_plan_command(client: Client, message: Message):
@@ -267,7 +255,6 @@ chat_data_cache = {}
 
 async def not_joined(client: Client, message: Message):
     temp = await message.reply("<b><i>ᴡᴀɪᴛ ᴀ ꜱᴇᴄ..</i></b>")
-
     user_id = message.from_user.id
     buttons = []
     count = 0
@@ -276,7 +263,6 @@ async def not_joined(client: Client, message: Message):
         all_channels = await db.show_channels()  
         for total, chat_id in enumerate(all_channels, start=1):
             mode = await db.get_channel_mode(chat_id)  
-
             await message.reply_chat_action(ChatAction.TYPING)
 
             if not await is_sub(client, user_id, chat_id):
@@ -288,13 +274,11 @@ async def not_joined(client: Client, message: Message):
                         chat_data_cache[chat_id] = data
 
                     name = data.title
-
                     if mode == "on" and not data.username:
                         invite = await client.create_chat_invite_link(
-                            chat_id=chat_id,
-                            creates_join_request=True,
+                            chat_id=chat_id, creates_join_request=True,
                             expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None
-                            )
+                        )
                         link = invite.invite_link
                     else:
                         if data.username:
@@ -302,19 +286,16 @@ async def not_joined(client: Client, message: Message):
                         else:
                             invite = await client.create_chat_invite_link(
                                 chat_id=chat_id,
-                                expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None)
+                                expire_date=datetime.utcnow() + timedelta(seconds=FSUB_LINK_EXPIRY) if FSUB_LINK_EXPIRY else None
+                            )
                             link = invite.invite_link
 
                     buttons.append([InlineKeyboardButton(text=f"📢 {name}", url=link)])
                     count += 1
                     await temp.edit(f"<b>{'! ' * count}</b>")
-
                 except Exception as e:
                     print(f"Error with chat {chat_id}: {e}")
-                    return await temp.edit(
-                        f"<b><i>! ᴇʀʀᴏʀ, ᴄᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴩᴇʀ ᴛᴏ ꜱᴏʟᴠᴇ ᴛʜᴇ ɪꜱꜱᴜᴇꜱ @mrkillersss</i></b>\n"
-                        f"<blockquote expandable><b>ʀᴇᴀꜱᴏɴ:</b> {e}</blockquote>"
-                    )
+                    return await temp.edit(f"<b><i>! ᴇʀʀᴏʀ: {e}</i></b>")
 
         try:
             if message.command and len(message.command) > 1:
@@ -324,14 +305,8 @@ async def not_joined(client: Client, message: Message):
                 retry_url = f"https://t.me/{client.username}"
 
             buttons.append([
-                InlineKeyboardButton(
-                    text='♻️ ᴛʀy ᴀɢᴀɪɴ',
-                    url=retry_url
-                ),
-                InlineKeyboardButton(
-                    text='❓ ʜᴏᴡ ᴛᴏ ᴊᴏɪɴ',
-                    callback_data='help'
-                )
+                InlineKeyboardButton(text='♻️ ᴛʀy ᴀɢᴀɪɴ', url=retry_url),
+                InlineKeyboardButton(text='❓ ʜᴏᴡ ᴛᴏ ᴊᴏɪɴ', callback_data='help')
             ])
         except Exception:
             pass
@@ -348,177 +323,9 @@ async def not_joined(client: Client, message: Message):
             ),
             reply_markup=InlineKeyboardMarkup(buttons),
         )
-
     except Exception as e:
         print(f"Final Error: {e}")
-        await temp.edit(
-            f"<b><i>! ᴇʀʀᴏʀ, ᴄᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴩᴇʀ ᴛᴏ ꜱᴏʟᴠᴇ ᴛʜᴇ ɪꜱꜱᴜᴇꜱ @mrkillersss</i></b>\n"
-            f"<blockquote expandable><b>ʀᴇᴀꜱᴏɴ:</b> {e}</blockquote>"
-        )
-
-
-@Bot.on_callback_query(filters.regex("^buy_vip_cb$"))
-async def buy_vip_callback(client: Client, query: CallbackQuery):
-    plans_markup = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton("⚡ 7 ᴅᴀʏs (₹30)", callback_data="plan_7d"), InlineKeyboardButton("⚡ 15 ᴅᴀʏs (₹50)", callback_data="plan_15d")],
-            [InlineKeyboardButton("⚡ 1 ᴍᴏɴᴛʜ (₹90)", callback_data="plan_1m"), InlineKeyboardButton("⚡ 3 ᴍᴏɴᴛʜs (₹220)", callback_data="plan_3m")],
-            [InlineKeyboardButton("⚡ ʟɪғᴇᴛɪᴍᴇ (₹499)", callback_data="plan_life")],
-            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
-        ]
-    )
-    text = "<blockquote><b>💎 ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴs & ᴘʀɪᴄɪɴɢ 💎</b>\n\n<i>Kripya niche se apna pasandida plan select karein:</i></blockquote>"
-    try:
-        await query.message.edit_caption(caption=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
-    except Exception:
-        await query.message.edit_text(text=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
-
-
-@Bot.on_callback_query(filters.regex("^plan_"))
-async def select_plan_callback(client: Client, query: CallbackQuery):
-    data = query.data
-    
-    plan_info = {
-        "plan_7d": ("7 Days Plan", "₹30"),
-        "plan_15d": ("15 Days Plan", "₹50"),
-        "plan_1m": ("1 Month Plan", "₹90"),
-        "plan_3m": ("3 Months Plan", "₹220"),
-        "plan_life": ("Lifetime Plan", "₹499")
-    }
-    
-    plan_name, plan_price = plan_info.get(data, ("VIP Plan", "As per chart"))
-    
-    caption_text = (
-        f"<blockquote><b>💎 ꜱᴇʟᴇᴄᴛᴇᴅ ᴘʟᴀɴ ᴅᴇᴛᴀɪʟꜱ:</b>\n\n"
-        f"<b>📦 ᴘʟᴀɴ:</b> <code>{plan_name}</code>\n"
-        f"<b>💰 ᴘʀɪᴄᴇ:</b> <code>{plan_price}</code>\n\n"
-        f"<b>📌 ᴘᴀʏᴍᴇɴᴛ ɪɴsᴛʀᴜᴄᴛɪᴏɴs:</b>\n"
-        f"1. <i>Niche diye gaye QR code ko scan karke payment karein.</i>\n"
-        f"2. <i>Payment successful hone ke baad screenshot admin ko bhejein.</i></blockquote>"
-    )
-    
-    qr_markup = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton("💳 ꜱᴇɴᴅ sᴄʀᴇᴇɴsʜᴏᴛ ᴛᴏ ᴀᴅᴍɪɴ", url=PAYMENT_LINK)],
-            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ ᴛᴏ ᴘʟᴀɴs", callback_data="buy_vip_cb"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
-        ]
-    )
-    
-    try:
-        await query.message.delete()
-        await client.send_photo(
-            chat_id=query.message.chat.id,
-            photo=PAYMENT_QR,
-            caption=caption_text,
-            reply_markup=qr_markup,
-            parse_mode=ParseMode.HTML
-        )
-    except Exception as e:
-        await query.answer(f"Error: {e}", show_alert=True)
-
-
-@Bot.on_callback_query(filters.regex("^start$"))
-async def start_cb(client: Client, query: CallbackQuery):
-    start_caption = START_MSG.format(
-        first=query.from_user.first_name,
-        last=query.from_user.last_name,
-        username=None if not query.from_user.username else '@' + query.from_user.username,
-        mention=query.from_user.mention,
-        id=query.from_user.id
-    ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴘ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>"
-
-    try:
-        await query.message.edit_caption(
-            caption=start_caption,
-            reply_markup=get_start_keyboard(),
-            parse_mode=ParseMode.HTML
-        )
-    except Exception:
-        try:
-            await query.message.delete()
-        except:
-            pass
-        await client.send_photo(
-            chat_id=query.message.chat.id,
-            photo=START_PIC,
-            caption=start_caption,
-            reply_markup=get_start_keyboard(),
-            parse_mode=ParseMode.HTML
-        )
-
-
-@Bot.on_callback_query(filters.regex("^help$"))
-async def help_cb(client: Client, query: CallbackQuery):
-    back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
-    try:
-        await query.message.edit_caption(
-            caption=HELP_TXT,
-            reply_markup=back_markup,
-            parse_mode=ParseMode.HTML
-        )
-    except Exception:
-        await query.message.edit_text(
-            text=HELP_TXT,
-            reply_markup=back_markup,
-            parse_mode=ParseMode.HTML
-        )
-
-
-@Bot.on_callback_query(filters.regex("^about$"))
-async def about_cb(client: Client, query: CallbackQuery):
-    back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
-    try:
-        await query.message.edit_caption(
-            caption=ABOUT_TXT,
-            reply_markup=back_markup,
-            parse_mode=ParseMode.HTML
-        )
-    except Exception:
-        await query.message.edit_text(
-            text=ABOUT_TXT,
-            reply_markup=back_markup,
-            parse_mode=ParseMode.HTML
-        )
-
-
-@Bot.on_callback_query(filters.regex("^my_plan_cb$"))
-async def my_plan_callback(client: Client, query: CallbackQuery):
-    user_id = query.from_user.id
-    back_markup = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton("💎 ʙᴜʏ / ᴜᴘɢʀᴀᴅᴇ ᴘʟᴀɴ", callback_data="buy_vip_cb")],
-            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
-        ]
-    )
-
-    try:
-        is_active, expiry = await db.check_paid_access(user_id)
-        if is_active:
-            if isinstance(expiry, datetime):
-                exp_str = expiry.strftime("%d-%b-%Y | %I:%M %p")
-            else:
-                exp_str = str(expiry)
-            
-            plan_text = (
-                f"<blockquote><b>💎 ʏᴏᴜʀ ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ ɪs ᴀᴄᴛɪᴠᴇ!</b>\n\n"
-                f"<b>👤 ᴜsᴇʀ:</b> {query.from_user.mention}\n"
-                f"<b>🆔 ɪᴅ:</b> <code>{user_id}</code>\n"
-                f"<b>⏳ ᴇxᴘɪʀʏ:</b> <code>{exp_str}</code></blockquote>"
-            )
-        else:
-            plan_text = (
-                f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.</b>\n\n"
-                f"<i>ɴɪᴄʜᴇ ʙᴜᴛᴛᴏɴ ᴘᴀʀ ᴄʟɪᴄᴋ ᴋᴀʀᴋᴇ ᴘʟᴀɴꜱ & ᴘʀɪᴄᴇ ᴅᴇᴋʜᴇɪɴ!</i></blockquote>"
-            )
-
-        try:
-            await query.message.edit_caption(caption=plan_text, reply_markup=back_markup, parse_mode=ParseMode.HTML)
-        except Exception:
-            await query.message.edit_text(text=plan_text, reply_markup=back_markup, parse_mode=ParseMode.HTML)
-
-    except Exception as e:
-        await query.answer(f"Error: {e}", show_alert=True)
-
+        await temp.edit(f"<b><i>! ᴇʀʀᴏʀ: {e}</i></b>")
 
 @Bot.on_message(filters.command('commands') & filters.private & admin)
 async def bcmd(bot: Bot, message: Message):        
