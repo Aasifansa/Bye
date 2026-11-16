@@ -30,11 +30,34 @@ BAN_SUPPORT = f"{BAN_SUPPORT}"
 PAYMENT_LINK = "https://t.me/mrkillersss" # Yahan apna payment link ya QR chat link daalein
 
 
+# --- 🎛️ GLOBAL START MENU KEYBOARD ---
+def get_start_keyboard():
+    return InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK),
+                InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")
+            ],
+            [
+                InlineKeyboardButton("📢 ᴜᴩᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Sofi_Backup"),
+                InlineKeyboardButton("🆘 ꜱᴜᴩᴩᴏʀᴛ", url=BAN_SUPPORT)
+            ],
+            [
+                InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data="about"),
+                InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data="help")
+            ],
+            [
+                InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")
+            ]
+        ]
+    )
+
+
 # --- 💎 PLAN CHECK COMMAND (Priority Handler) ---
 @Bot.on_message(filters.command(['plan', 'myplan']) & filters.private)
 async def check_user_plan_command(client: Client, message: Message):
     user_id = message.from_user.id
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
 
     try:
         is_active, expiry = await db.check_paid_access(user_id)
@@ -114,7 +137,6 @@ async def start_command(client: Client, message: Message):
     # Handle normal message flow (File link click)
     text = message.text
     if len(text) > 7:
-        # Agar user ke paas paid access nahi hai aur wo admin bhi nahi hai
         if not is_active and user_id not in ADMINS:
             return await message.reply_text(
                 "<blockquote><b>⛔️ ᴩᴀɪᴅ ᴀᴄᴄᴇꜱꜱ ʀᴇqᴜɪʀᴇᴅ!</b>\n\n"
@@ -163,7 +185,6 @@ async def start_command(client: Client, message: Message):
         finally:
             await temp_msg.delete()
 
-        # Shareable link for the file
         share_url = f"https://t.me/share/url?url=https://t.me/{client.username}?start={base64_string}"
 
         codeflix_msgs = []
@@ -229,26 +250,6 @@ async def start_command(client: Client, message: Message):
             except Exception as e:
                 print(f"Error updating notification with 'Get File Again' button: {e}")
     else:
-        # Start Menu (Paid Bot Menu Layout)
-        reply_markup = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK),
-                    InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")
-                ],
-                [
-                    InlineKeyboardButton("📢 ᴜᴩᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Sofi_Backup"),
-                    InlineKeyboardButton("🆘 ꜱᴜᴩᴩᴏʀᴛ", url=BAN_SUPPORT)
-                ],
-                [
-                    InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data="about"),
-                    InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data="help")
-                ],
-                [
-                    InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")
-                ]
-            ]
-        )
         await message.reply_photo(
             photo=START_PIC,
             caption=START_MSG.format(
@@ -258,7 +259,7 @@ async def start_command(client: Client, message: Message):
                 mention=message.from_user.mention,
                 id=message.from_user.id
             ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
-            reply_markup=reply_markup,
+            reply_markup=get_start_keyboard(),
             message_effect_id=5104841245755180586)  # 🔥
         
         return
@@ -357,6 +358,72 @@ async def not_joined(client: Client, message: Message):
             f"<b><i>! ᴇʀʀᴏʀ, ᴄᴏɴᴛᴀᴄᴛ ᴅᴇᴠᴇʟᴏᴩᴇʀ ᴛᴏ ꜱᴏʟᴠᴇ ᴛʜᴇ ɪꜱꜱᴜᴇꜱ @mrkillersss</i></b>\n"
             f"<blockquote expandable><b>ʀᴇᴀꜱᴏɴ:</b> {e}</blockquote>"
         )
+
+
+# --- 🔘 CALLBACK QUERY HANDLERS (FIXED BUTTON PERSISTENCE) ---
+@Bot.on_callback_query(filters.regex("start"))
+async def start_cb(client: Client, query: CallbackQuery):
+    await query.message.edit_media(
+        photo=START_PIC,
+        caption=START_MSG.format(
+            first=query.from_user.first_name,
+            last=query.from_user.last_name,
+            username=None if not query.from_user.username else '@' + query.from_user.username,
+            mention=query.from_user.mention,
+            id=query.from_user.id
+        ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
+        reply_markup=get_start_keyboard()
+    )
+
+
+@Bot.on_callback_query(filters.regex("help"))
+async def help_cb(client: Client, query: CallbackQuery):
+    back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
+    await query.message.edit_text(
+        text=HELP_TXT,
+        reply_markup=back_markup,
+        parse_mode=ParseMode.HTML
+    )
+
+
+@Bot.on_callback_query(filters.regex("about"))
+async def about_cb(client: Client, query: CallbackQuery):
+    back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
+    await query.message.edit_text(
+        text=ABOUT_TXT,
+        reply_markup=back_markup,
+        parse_mode=ParseMode.HTML
+    )
+
+
+@Bot.on_callback_query(filters.regex("my_plan_cb"))
+async def my_plan_callback(client: Client, query: CallbackQuery):
+    user_id = query.from_user.id
+    back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
+
+    try:
+        is_active, expiry = await db.check_paid_access(user_id)
+        if is_active:
+            if isinstance(expiry, datetime):
+                exp_str = expiry.strftime("%d-%b-%Y | %I:%M %p")
+            else:
+                exp_str = str(expiry)
+            
+            await query.message.edit_text(
+                f"<blockquote><b>💎 ʏᴏᴜʀ ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ ɪs ᴀᴄᴛɪᴠᴇ!</b>\n\n"
+                f"<b>👤 ᴜsᴇʀ:</b> {query.from_user.mention}\n"
+                f"<b>🆔 ɪᴅ:</b> <code>{user_id}</code>\n"
+                f"<b>⏳ ᴇxᴘɪʀʏ:</b> <code>{exp_str}</code></blockquote>",
+                reply_markup=back_markup
+            )
+        else:
+            await query.message.edit_text(
+                f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.</b>\n\n"
+                f"<i>ᴄᴏɴᴛᴀᴄᴛ ᴀᴅᴍɪɴ ᴛᴏ ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇss!</i></blockquote>",
+                reply_markup=back_markup
+            )
+    except Exception as e:
+        await query.message.edit_text(f"<b>❌ ᴇʀʀᴏʀ:</b> <code>{e}</code>", reply_markup=back_markup)
 
 
 @Bot.on_message(filters.command('commands') & filters.private & admin)
