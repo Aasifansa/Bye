@@ -84,7 +84,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     parse_mode=ParseMode.HTML
                 )
 
-        elif data == "buy_vip_cb":
+        elif data in ["buy_vip_cb", "buy_upgrade"]:
             await query.answer()
             plans_markup = InlineKeyboardMarkup(
                 [
@@ -99,7 +99,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             if query.message.photo:
                 await query.message.edit_caption(caption=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
             else:
-                await query.message.edit_text(text=text, reply_markup=plans_markup, parse_Mode=ParseMode.HTML)
+                await query.message.edit_text(text=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
 
         elif data.startswith("plan_"):
             await query.answer()
@@ -188,3 +188,4 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
+        
