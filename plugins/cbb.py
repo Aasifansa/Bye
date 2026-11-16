@@ -4,6 +4,7 @@
 from pyrogram import Client 
 from bot import Bot
 from config import *
+from pyrogram.enums import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from database.database import *
 from datetime import datetime
@@ -88,7 +89,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             plans_markup = InlineKeyboardMarkup(
                 [
                     [InlineKeyboardButton("⚡ 7 ᴅᴀʏꜱ (₹30)", callback_data="plan_7d"), InlineKeyboardButton("⚡ 15 ᴅᴀʏꜱ (₹50)", callback_data="plan_15d")],
-                    [InlineKeyboardButton("⚡ 1 ᴍᴏɴᴛ🇭 (₹90)", callback_data="plan_1m"), InlineKeyboardButton("⚡ 3 ᴍᴏɴᴛʜꜱ (₹220)", callback_data="plan_3m")],
+                    [InlineKeyboardButton("⚡ 1 ᴍᴏɴᴛʜ (₹90)", callback_data="plan_1m"), InlineKeyboardButton("⚡ 3 ᴍᴏɴᴛʜꜱ (₹220)", callback_data="plan_3m")],
                     [InlineKeyboardButton("⚡ ʟɪꜰᴇᴛɪᴍᴇ (₹499)", callback_data="plan_life")],
                     [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
                 ]
@@ -98,7 +99,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             if query.message.photo:
                 await query.message.edit_caption(caption=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
             else:
-                await query.message.edit_text(text=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
+                await query.message.edit_text(text=text, reply_markup=plans_markup, parse_Mode=ParseMode.HTML)
 
         elif data.startswith("plan_"):
             await query.answer()
@@ -187,4 +188,3 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-            
