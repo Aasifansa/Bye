@@ -1,13 +1,5 @@
 # Don't Remove Credit @CodeFlix_Bots, @rohit_1888
 # Ask Doubt on telegram @CodeflixSupport
-#
-# Copyright (C) 2025 by Codeflix-Bots@Github, < https://github.com/Codeflix-Bots >.
-#
-# This file is part of < https://github.com/Codeflix-Bots/FileStore > project,
-# and is released under the MIT License.
-# Please see < https://github.com/Codeflix-Bots/FileStore/blob/master/LICENSE >
-#
-# All rights reserved.
 
 from pyrogram import Client 
 from bot import Bot
@@ -16,7 +8,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 from database.database import *
 from datetime import datetime
 
-PAYMENT_LINK = "https://t.me/mrkillersss" # Admin DM link jahan payment screenshot bhejna hai
+PAYMENT_LINK = "https://t.me/mrkillersss" 
 PAYMENT_QR = "https://image.zaw-myo.workers.dev/image/db8410f2-94c7-41ab-acdc-e7e319b0e663"
 
 async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMarkup):
@@ -35,27 +27,26 @@ async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboa
 async def cb_handler(client: Bot, query: CallbackQuery):
     data = query.data
     user_id = query.from_user.id
-    print(f"[DEBUG CB]: Received callback data -> {data} from user {user_id}")
 
     try:
         if data == "help":
-            help_text = HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() or 'HELP_TXT' in locals() else f"<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>\n\n<i>ʜᴇʟʟᴏ {query.from_user.first_name}, ʏᴇ ᴇᴋ ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ ʜᴀɪ.</i>"
+            help_text = HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() or 'HELP_TXT' in locals() else f"<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>"
             await smart_edit(
                 query,
                 text=f"<blockquote>{help_text}</blockquote>",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('🏠 ʜᴏᴍᴇ', callback_data='start'),
+                    [InlineKeyboardButton('◀️ ʙᴀᴄᴋ', callback_data='start'),
                      InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
                 ])
             )
 
         elif data == "about":
-            about_text = ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() or 'ABOUT_TXT' in locals() else f"<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>\n\n<i>ᴄʀᴇᴀᴛᴇᴅ ғᴏʀ ꜱᴇᴄᴜʀᴇ ꜰɪʟᴇ ꜱᴛᴏʀᴀɢᴇ.</i>"
+            about_text = ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() or 'ABOUT_TXT' in locals() else f"<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>"
             await smart_edit(
                 query,
                 text=f"<blockquote>{about_text}</blockquote>",
                 reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('🏠 ʜᴏᴍᴇ', callback_data='start'),
+                    [InlineKeyboardButton('◀️ ʙᴀᴄᴋ', callback_data='start'),
                      InlineKeyboardButton('❌ ᴄʟᴏꜱᴇ', callback_data='close')]
                 ])
             )
@@ -71,44 +62,24 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
             start_full_text = start_text + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ. ʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>"
 
+            keyboard = InlineKeyboardMarkup([
+                [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", callback_data="buy_vip_cb"),
+                 InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
+                [InlineKeyboardButton("📢 ᴜᴩᴅᴀᴛᴇꜱ ᴄʜᴀɴɴᴇʟ", url="https://t.me/Sofi_Backup"),
+                 InlineKeyboardButton("🆘 ꜱᴜᴩᴩᴏʀᴛ", url=BAN_SUPPORT)],
+                [InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data="about"),
+                 InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data="help")],
+                [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
+            ])
+
             try:
                 if query.message.photo:
-                    await query.message.edit_caption(
-                        caption=start_full_text,
-                        reply_markup=InlineKeyboardMarkup([
-                            [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", callback_data="buy_vip_cb"),
-                             InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
-                            [InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data='help'),
-                             InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data='about')],
-                            [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
-                        ])
-                    )
+                    await query.message.edit_caption(caption=start_full_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
                 else:
                     await query.message.delete()
-                    await client.send_photo(
-                        chat_id=query.message.chat.id,
-                        photo=START_PIC,
-                        caption=start_full_text,
-                        reply_markup=InlineKeyboardMarkup([
-                            [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", callback_data="buy_vip_cb"),
-                             InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
-                            [InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data='help'),
-                             InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data='about')],
-                            [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
-                        ])
-                    )
+                    await client.send_photo(chat_id=query.message.chat.id, photo=START_PIC, caption=start_full_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
             except Exception:
-                await smart_edit(
-                    query,
-                    text=start_full_text,
-                    reply_markup=InlineKeyboardMarkup([
-                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", callback_data="buy_vip_cb"),
-                         InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
-                        [InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data='help'),
-                         InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data='about')],
-                        [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
-                    ])
-                )
+                await smart_edit(query, text=start_full_text, reply_markup=keyboard)
 
         elif data == "buy_vip_cb":
             plans_markup = InlineKeyboardMarkup(
@@ -210,8 +181,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 ]
                 await query.message.edit_text(
                     f"<blockquote><b>ᴄʜᴀɴɴᴇʟ:</b> {chat.title}\n<b>ᴄᴜʀʀᴇɴᴛ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b> {status}</blockquote>",
-                    reply_markup=InlineKeyboardMarkup(buttons),
-                    parse_mode=ParseMode.HTML
+                    reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML
                 )
             except Exception:
                 await query.answer("ꜰᴀɪʟᴇᴅ ᴛᴏ ꜰᴇᴛᴄʜ ᴄʜᴀɴɴᴇʟ ɪɴꜰᴏ", show_alert=True)
@@ -220,7 +190,6 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             cid, action = data.split("_")[2:]
             cid = int(cid)
             mode = "on" if action == "on" else "off"
-
             await db.set_channel_mode(cid, mode)
             await query.answer(f"ꜰᴏʀᴄᴇ-ꜱᴜʙ ꜱᴇᴛ ᴛᴏ {'ON' if mode == 'on' else 'OFF'}")
 
@@ -233,8 +202,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             ]
             await query.message.edit_text(
                 f"<blockquote><b>ᴄʜᴀɴɴᴇʟ:</b> {chat.title}\n<b>ᴄᴜʀʀᴇɴᴛ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b> {status}</blockquote>",
-                reply_markup=InlineKeyboardMarkup(buttons),
-                parse_mode=ParseMode.HTML
+                reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML
             )
 
         elif data == "fsub_back":
@@ -251,8 +219,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
             await query.message.edit_text(
                 "<blockquote><b>ꜱᴇʟᴇᴄᴛ ᴀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴛᴏɢɢʟᴇ ɪᴛꜱ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b></blockquote>",
-                reply_markup=InlineKeyboardMarkup(buttons),
-                parse_mode=ParseMode.HTML
+                reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML
             )
 
     except Exception as e:
@@ -261,4 +228,4 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-                     
+        
