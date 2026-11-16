@@ -40,7 +40,8 @@ class Rohit:
         return bool(found)
 
     async def add_user(self, user_id: int):
-        await self.user_data.insert_one({'_id': user_id})
+        if not await self.present_user(user_id):
+            await self.user_data.insert_one({'_id': user_id, 'joined_date': datetime.utcnow()})
         return
 
     async def full_userbase(self):
@@ -82,12 +83,19 @@ class Rohit:
                 return False, None
         return False, None
 
-    async def get_all_premium_users(self):
-        """Saare active premium users ki list nikalne ke liye"""
+    async def get_all_prem_users(self):
+        """Saare active premium users ki documents list nikalne ke liye (Admin command support)"""
         now = datetime.utcnow()
         cursor = self.user_data.find({'is_premium': True, 'expiry_date': {'$gt': now}})
         docs = await cursor.to_list(length=None)
-        return [doc['_id'] for doc in docs]
+        # Formatting to match dictionary structures expected by admin panel loop
+        formatted_users = []
+        for doc in docs:
+            formatted_users.append({
+                'user_id': doc['_id'],
+                'expires_at': doc.get('expiry_date')
+            })
+        return formatted_users
     # ==============================================================
 
 
