@@ -30,6 +30,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
 
     try:
         if data == "help":
+            await query.answer()
             help_text = HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() or 'HELP_TXT' in locals() else f"<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>"
             await smart_edit(
                 query,
@@ -41,6 +42,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             )
 
         elif data == "about":
+            await query.answer()
             about_text = ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() or 'ABOUT_TXT' in locals() else f"<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>"
             await smart_edit(
                 query,
@@ -52,6 +54,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             )
 
         elif data == "start":
+            await query.answer()
             start_text = START_MSG.format(
                 first=query.from_user.first_name,
                 last=query.from_user.last_name or "",
@@ -82,6 +85,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 await smart_edit(query, text=start_full_text, reply_markup=keyboard)
 
         elif data == "buy_vip_cb":
+            await query.answer("Loading VIP Plans...")
             plans_markup = InlineKeyboardMarkup(
                 [
                     [InlineKeyboardButton("⚡ 7 ᴅᴀʏꜱ (₹30)", callback_data="plan_7d"), InlineKeyboardButton("⚡ 15 ᴅᴀʏꜱ (₹50)", callback_data="plan_15d")],
@@ -94,6 +98,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await smart_edit(query, text=text, reply_markup=plans_markup)
 
         elif data.startswith("plan_"):
+            await query.answer("Fetching Payment QR...")
             plan_info = {
                 "plan_7d": ("7 Days Plan", "₹30"),
                 "plan_15d": ("15 Days Plan", "₹50"),
@@ -132,6 +137,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 await query.answer(f"Error: {e}", show_alert=True)
 
         elif data == "my_plan_cb":
+            await query.answer("Checking your plan...")
             is_active, expiry = await db.check_paid_access(user_id)
             plan_markup = InlineKeyboardMarkup(
                 [
@@ -161,6 +167,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await smart_edit(query, text=text, reply_markup=plan_markup)
 
         elif data == "close":
+            await query.answer()
             try:
                 await query.message.delete()
                 if query.message.reply_to_message:
@@ -169,6 +176,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 pass
 
         elif data.startswith("rfs_ch_"):
+            await query.answer()
             cid = int(data.split("_")[2])
             try:
                 chat = await client.get_chat(cid)
@@ -206,6 +214,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             )
 
         elif data == "fsub_back":
+            await query.answer()
             channels = await db.show_channels()
             buttons = []
             for cid in channels:
@@ -228,4 +237,4 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-        
+                                          
