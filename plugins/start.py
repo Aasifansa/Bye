@@ -27,11 +27,10 @@ from helper_func import *
 from database.database import *
 
 BAN_SUPPORT = f"{BAN_SUPPORT}"
-PAYMENT_LINK = "https://t.me/mrkillersss" # Admin DM link jahan payment screenshot bhejna hai
+PAYMENT_LINK = "https://t.me/mrkillersss" 
 PAYMENT_QR = "https://image.zaw-myo.workers.dev/image/db8410f2-94c7-41ab-acdc-e7e319b0e663"
 
 
-# --- 🎛️ GLOBAL START MENU KEYBOARD ---
 def get_start_keyboard():
     return InlineKeyboardMarkup(
         [
@@ -54,7 +53,6 @@ def get_start_keyboard():
     )
 
 
-# --- 💎 PLAN CHECK COMMAND (Priority Handler) ---
 @Bot.on_message(filters.command(['plan', 'myplan']) & filters.private)
 async def check_user_plan_command(client: Client, message: Message):
     user_id = message.from_user.id
@@ -96,7 +94,6 @@ async def check_user_plan_command(client: Client, message: Message):
 async def start_command(client: Client, message: Message):
     user_id = message.from_user.id
 
-    # Check if user is banned
     banned_users = await db.get_ban_users()
     if user_id in banned_users:
         return await message.reply_text(
@@ -107,11 +104,9 @@ async def start_command(client: Client, message: Message):
             )
         )
         
-    # ✅ Check Force Subscription
     if not await is_subscribed(client, user_id):
         return await not_joined(client, message)
 
-    # Add user if not already present
     is_new_user = False
     if not await db.present_user(user_id):
         try:
@@ -120,7 +115,6 @@ async def start_command(client: Client, message: Message):
         except:
             pass
 
-    # --- 👤 LOG: User Started Bot (Only First Time) ---
     if is_new_user:
         try:
             current_time = datetime.now().strftime("%d-%b-%Y | %I:%M:%S %p")
@@ -137,10 +131,8 @@ async def start_command(client: Client, message: Message):
         except Exception as e:
             print(f"sᴛᴀʀᴛ ʟᴏɢ ᴇʀʀᴏʀ: {e}")
 
-    # 🚫 PAID CHECK: Check whether user has active paid/VIP access
     is_active, expiry = await db.check_paid_access(user_id)
 
-    # Handle normal message flow (File link click)
     text = message.text
     if len(text) > 7:
         if not is_active and user_id not in ADMINS:
@@ -266,12 +258,11 @@ async def start_command(client: Client, message: Message):
                 id=message.from_user.id
             ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴘ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
             reply_markup=get_start_keyboard(),
-            message_effect_id=5104841245755180586)
-        
+            message_effect_id=5104841245755180586
+        )
         return
 
 
-#=====================================================================================##
 chat_data_cache = {}
 
 async def not_joined(client: Client, message: Message):
@@ -366,7 +357,6 @@ async def not_joined(client: Client, message: Message):
         )
 
 
-# --- 🔘 CALLBACK QUERY HANDLERS ---
 @Bot.on_callback_query(filters.regex("^buy_vip_cb$"))
 async def buy_vip_callback(client: Client, query: CallbackQuery):
     plans_markup = InlineKeyboardMarkup(
@@ -384,7 +374,6 @@ async def buy_vip_callback(client: Client, query: CallbackQuery):
         await query.message.edit_text(text=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
 
 
-# Plan-specific handlers that show the QR Code
 @Bot.on_callback_query(filters.regex("^plan_"))
 async def select_plan_callback(client: Client, query: CallbackQuery):
     data = query.data
@@ -445,7 +434,6 @@ async def start_cb(client: Client, query: CallbackQuery):
             parse_mode=ParseMode.HTML
         )
     except Exception:
-        # Fallback agar photo message na ho toh naya bhej kar purana delete kar dein
         try:
             await query.message.delete()
         except:
@@ -481,4 +469,22 @@ async def about_cb(client: Client, query: CallbackQuery):
     back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
     try:
         await query.message.edit_caption(
-  
+            caption=ABOUT_TXT,
+            reply_markup=back_markup,
+            parse_mode=ParseMode.HTML
+        )
+    except Exception:
+        await query.message.edit_text(
+            text=ABOUT_TXT,
+            reply_markup=back_markup,
+            parse_mode=ParseMode.HTML
+        )
+
+
+@Bot.on_callback_query(filters.regex("^my_plan_cb$"))
+async def my_plan_callback(client: Client, query: CallbackQuery):
+    user_id = query.from_user.id
+    back_markup = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("💎 ʙᴜʏ / ᴜᴘɢʀᴀᴅᴇ ᴘʟᴀɴ", callback_data="buy_vip_cb")],
+            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ 
