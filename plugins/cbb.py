@@ -11,48 +11,40 @@ from datetime import datetime
 PAYMENT_LINK = "https://t.me/mrkillersss" 
 PAYMENT_QR = "https://image.zaw-myo.workers.dev/image/db8410f2-94c7-41ab-acdc-e7e319b0e663"
 
-async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMarkup):
-    try:
-        if query.message.caption is not None:
-            await query.message.edit_caption(caption=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
-        else:
-            await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
-    except Exception as e:
-        print(f"Smart Edit Error: {e}")
-        try:
-            await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
-        except Exception as err:
-            print(f"Fallback Edit Error: {err}")
-
 @Bot.on_callback_query()
 async def cb_handler(client: Bot, query: CallbackQuery):
     data = query.data
     user_id = query.from_user.id
+    print(f"[CB DEBUG] Received callback: {data} from user: {user_id}")
 
     try:
         if data == "help":
             await query.answer()
             help_text = HELP_TXT.format(first=query.from_user.first_name) if 'HELP_TXT' in globals() or 'HELP_TXT' in locals() else f"<b>ʜᴇʟᴩ ᴍᴇɴᴜ</b>"
-            await smart_edit(
-                query,
-                text=f"<blockquote>{help_text}</blockquote>",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('◀️ ʙᴀᴄᴋ', callback_data='start'),
-                     InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
-                ])
-            )
+            text = f"<blockquote>{help_text}</blockquote>"
+            reply_markup = InlineKeyboardMarkup([
+                [InlineKeyboardButton('◀️ ʙᴀᴄᴋ', callback_data='start'),
+                 InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data='close')]
+            ])
+            
+            if query.message.photo:
+                await query.message.edit_caption(caption=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
+            else:
+                await query.message.edit_text(text=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
         elif data == "about":
             await query.answer()
             about_text = ABOUT_TXT.format(first=query.from_user.first_name) if 'ABOUT_TXT' in globals() or 'ABOUT_TXT' in locals() else f"<b>ᴀʙᴏᴜᴛ ʙᴏᴛ</b>"
-            await smart_edit(
-                query,
-                text=f"<blockquote>{about_text}</blockquote>",
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton('◀️ ʙᴀᴄᴋ', callback_data='start'),
-                     InlineKeyboardButton('❌ ᴄʟᴏꜱᴇ', callback_data='close')]
-                ])
-            )
+            text = f"<blockquote>{about_text}</blockquote>"
+            reply_markup = InlineKeyboardMarkup([
+                [InlineKeyboardButton('◀️ ʙᴀᴄᴋ', callback_data='start'),
+                 InlineKeyboardButton('❌ ᴄʟᴏꜱᴇ', callback_data='close')]
+            ])
+            
+            if query.message.photo:
+                await query.message.edit_caption(caption=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
+            else:
+                await query.message.edit_text(text=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
 
         elif data == "start":
             await query.answer()
@@ -76,20 +68,37 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
             ])
 
-            await smart_edit(query, text=start_full_text, reply_markup=keyboard)
+            if query.message.photo:
+                await query.message.edit_caption(caption=start_full_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+            else:
+                try:
+                    await query.message.delete()
+                except:
+                    pass
+                await client.send_photo(
+                    chat_id=query.message.chat.id,
+                    photo=START_PIC,
+                    caption=start_full_text,
+                    reply_markup=keyboard,
+                    parse_mode=ParseMode.HTML
+                )
 
         elif data == "buy_vip_cb":
             await query.answer()
             plans_markup = InlineKeyboardMarkup(
                 [
                     [InlineKeyboardButton("⚡ 7 ᴅᴀʏꜱ (₹30)", callback_data="plan_7d"), InlineKeyboardButton("⚡ 15 ᴅᴀʏꜱ (₹50)", callback_data="plan_15d")],
-                    [InlineKeyboardButton("⚡ 1 ᴍᴏɴᴛʜ (₹90)", callback_data="plan_1m"), InlineKeyboardButton("⚡ 3 ᴍᴏɴᴛʜꜱ (₹220)", callback_data="plan_3m")],
+                    [InlineKeyboardButton("⚡ 1 ᴍᴏɴᴛ🇭 (₹90)", callback_data="plan_1m"), InlineKeyboardButton("⚡ 3 ᴍᴏɴᴛʜꜱ (₹220)", callback_data="plan_3m")],
                     [InlineKeyboardButton("⚡ ʟɪꜰᴇᴛɪᴍᴇ (₹499)", callback_data="plan_life")],
                     [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
                 ]
             )
             text = "<blockquote><b>💎 ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴꜱ & ᴘʀɪᴄɪɴɢ 💎</b>\n\n<i>Kripya niche se apna pasandida plan select karein:</i></blockquote>"
-            await smart_edit(query, text=text, reply_markup=plans_markup)
+            
+            if query.message.photo:
+                await query.message.edit_caption(caption=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
+            else:
+                await query.message.edit_text(text=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
 
         elif data.startswith("plan_"):
             await query.answer()
@@ -158,7 +167,10 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                     f"<i>ɴɪᴄʜᴇ ʙᴜᴛᴛᴏɴ ᴘᴀʀ ᴄʟɪᴄᴋ ᴋᴀʀᴋᴇ ᴘʟᴀɴꜱ & ᴘʀɪᴄᴇ ᴅᴇᴋʜᴇɪɴ!</i></blockquote>"
                 )
             
-            await smart_edit(query, text=text, reply_markup=plan_markup)
+            if query.message.photo:
+                await query.message.edit_caption(caption=text, reply_markup=plan_markup, parse_mode=ParseMode.HTML)
+            else:
+                await query.message.edit_text(text=text, reply_markup=plan_markup, parse_mode=ParseMode.HTML)
 
         elif data == "close":
             await query.answer()
@@ -175,4 +187,4 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-        
+            
