@@ -487,4 +487,45 @@ async def my_plan_callback(client: Client, query: CallbackQuery):
     back_markup = InlineKeyboardMarkup(
         [
             [InlineKeyboardButton("💎 ʙᴜʏ / ᴜᴘɢʀᴀᴅᴇ ᴘʟᴀɴ", callback_data="buy_vip_cb")],
-            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ 
+            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
+        ]
+    )
+
+    try:
+        is_active, expiry = await db.check_paid_access(user_id)
+        if is_active:
+            if isinstance(expiry, datetime):
+                exp_str = expiry.strftime("%d-%b-%Y | %I:%M %p")
+            else:
+                exp_str = str(expiry)
+            
+            plan_text = (
+                f"<blockquote><b>💎 ʏᴏᴜʀ ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ ɪs ᴀᴄᴛɪᴠᴇ!</b>\n\n"
+                f"<b>👤 ᴜsᴇʀ:</b> {query.from_user.mention}\n"
+                f"<b>🆔 ɪᴅ:</b> <code>{user_id}</code>\n"
+                f"<b>⏳ ᴇxᴘɪʀʏ:</b> <code>{exp_str}</code></blockquote>"
+            )
+        else:
+            plan_text = (
+                f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.</b>\n\n"
+                f"<i>ɴɪᴄʜᴇ ʙᴜᴛᴛᴏɴ ᴘᴀʀ ᴄʟɪᴄᴋ ᴋᴀʀᴋᴇ ᴘʟᴀɴꜱ & ᴘʀɪᴄᴇ ᴅᴇᴋʜᴇɪɴ!</i></blockquote>"
+            )
+
+        try:
+            await query.message.edit_caption(caption=plan_text, reply_markup=back_markup, parse_mode=ParseMode.HTML)
+        except Exception:
+            await query.message.edit_text(text=plan_text, reply_markup=back_markup, parse_mode=ParseMode.HTML)
+
+    except Exception as e:
+        await query.answer(f"Error: {e}", show_alert=True)
+
+
+@Bot.on_message(filters.command('commands') & filters.private & admin)
+async def bcmd(bot: Bot, message: Message):        
+    reply_markup = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("• ᴀʙᴏᴜᴛ •", callback_data="about"), InlineKeyboardButton("• ʜᴇʟᴩ •", callback_data="help")],
+            [InlineKeyboardButton("• ᴄʟᴏꜱᴇ •", callback_data="close")]
+        ]
+    )
+    await message.reply(text=CMD_TXT, reply_markup=reply_markup, quote=True)
