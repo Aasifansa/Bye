@@ -30,7 +30,7 @@ BAN_SUPPORT = f"{BAN_SUPPORT}"
 PAYMENT_LINK = "https://t.me/mrkillersss" # Yahan apna payment link ya QR chat link daalein
 
 
-# --- 🎛️ GLOBAL START MENU KEYBOARD ---
+# --- 🎛️ GLOBAL START MENU KEYBOARD (Saare buttons hamesha yahi rahenge) ---
 def get_start_keyboard():
     return InlineKeyboardMarkup(
         [
@@ -360,23 +360,42 @@ async def not_joined(client: Client, message: Message):
         )
 
 
-# --- 🔘 CALLBACK QUERY HANDLERS (FIXED BUTTON PERSISTENCE) ---
-@Bot.on_callback_query(filters.regex("start"))
+# --- 🔘 CALLBACK QUERY HANDLERS (FULL BUTTON PERSISTENCE FIX) ---
+@Bot.on_callback_query(filters.regex("^start$"))
 async def start_cb(client: Client, query: CallbackQuery):
-    await query.message.edit_media(
-        photo=START_PIC,
-        caption=START_MSG.format(
-            first=query.from_user.first_name,
-            last=query.from_user.last_name,
-            username=None if not query.from_user.username else '@' + query.from_user.username,
-            mention=query.from_user.mention,
-            id=query.from_user.id
-        ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
-        reply_markup=get_start_keyboard()
-    )
+    try:
+        await query.message.edit_media(
+            media=InputMediaPhoto(
+                media=START_PIC,
+                caption=START_MSG.format(
+                    first=query.from_user.first_name,
+                    last=query.from_user.last_name,
+                    username=None if not query.from_user.username else '@' + query.from_user.username,
+                    mention=query.from_user.mention,
+                    id=query.from_user.id
+                ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
+                parse_mode=ParseMode.HTML
+            ),
+            reply_markup=get_start_keyboard()
+        )
+    except Exception:
+        # Fallback agar edit_media photo support na kare toh naya message bhej kar purana delete kar dein
+        await query.message.delete()
+        await client.send_photo(
+            chat_id=query.message.chat.id,
+            photo=START_PIC,
+            caption=START_MSG.format(
+                first=query.from_user.first_name,
+                last=query.from_user.last_name,
+                username=None if not query.from_user.username else '@' + query.from_user.username,
+                mention=query.from_user.mention,
+                id=query.from_user.id
+            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
+            reply_markup=get_start_keyboard()
+        )
 
 
-@Bot.on_callback_query(filters.regex("help"))
+@Bot.on_callback_query(filters.regex("^help$"))
 async def help_cb(client: Client, query: CallbackQuery):
     back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
     await query.message.edit_text(
@@ -386,7 +405,7 @@ async def help_cb(client: Client, query: CallbackQuery):
     )
 
 
-@Bot.on_callback_query(filters.regex("about"))
+@Bot.on_callback_query(filters.regex("^about$"))
 async def about_cb(client: Client, query: CallbackQuery):
     back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
     await query.message.edit_text(
@@ -396,7 +415,7 @@ async def about_cb(client: Client, query: CallbackQuery):
     )
 
 
-@Bot.on_callback_query(filters.regex("my_plan_cb"))
+@Bot.on_callback_query(filters.regex("^my_plan_cb$"))
 async def my_plan_callback(client: Client, query: CallbackQuery):
     user_id = query.from_user.id
     back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
@@ -414,16 +433,18 @@ async def my_plan_callback(client: Client, query: CallbackQuery):
                 f"<b>👤 ᴜsᴇʀ:</b> {query.from_user.mention}\n"
                 f"<b>🆔 ɪᴅ:</b> <code>{user_id}</code>\n"
                 f"<b>⏳ ᴇxᴘɪʀʏ:</b> <code>{exp_str}</code></blockquote>",
-                reply_markup=back_markup
+                reply_markup=back_markup,
+                parse_mode=ParseMode.HTML
             )
         else:
             await query.message.edit_text(
                 f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.</b>\n\n"
                 f"<i>ᴄᴏɴᴛᴀᴄᴛ ᴀᴅᴍɪɴ ᴛᴏ ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇss!</i></blockquote>",
-                reply_markup=back_markup
+                reply_markup=back_markup,
+                parse_mode=ParseMode.HTML
             )
     except Exception as e:
-        await query.message.edit_text(f"<b>❌ ᴇʀʀᴏʀ:</b> <code>{e}</code>", reply_markup=back_markup)
+        await query.message.edit_text(f"<b>❌ ᴇʀʀᴏʀ:</b> <code>{e}</code>", reply_markup=back_markup, parse_mode=ParseMode.HTML)
 
 
 @Bot.on_message(filters.command('commands') & filters.private & admin)
