@@ -18,7 +18,7 @@ import time
 from datetime import datetime, timedelta
 from pyrogram import Client, filters, __version__
 from pyrogram.enums import ParseMode, ChatAction
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, ChatInviteLink, ChatPrivileges
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, ChatInviteLink, ChatPrivileges, InputMediaPhoto
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 from bot import Bot
@@ -27,15 +27,16 @@ from helper_func import *
 from database.database import *
 
 BAN_SUPPORT = f"{BAN_SUPPORT}"
-PAYMENT_LINK = "https://t.me/mrkillersss" # Yahan apna payment link ya QR chat link daalein
+PAYMENT_LINK = "https://t.me/mrkillersss" # Admin DM link jahan payment screenshot bhejna hai
+PAYMENT_QR = "https://image.zaw-myo.workers.dev/image/db8410f2-94c7-41ab-acdc-e7e319b0e663"
 
 
-# --- 🎛️ GLOBAL START MENU KEYBOARD (Saare buttons hamesha yahi rahenge) ---
+# --- 🎛️ GLOBAL START MENU KEYBOARD ---
 def get_start_keyboard():
     return InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK),
+                InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ", callback_data="buy_vip_cb"),
                 InlineKeyboardButton("👤 ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")
             ],
             [
@@ -57,7 +58,12 @@ def get_start_keyboard():
 @Bot.on_message(filters.command(['plan', 'myplan']) & filters.private)
 async def check_user_plan_command(client: Client, message: Message):
     user_id = message.from_user.id
-    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
+    reply_markup = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("💎 ᴠɪᴇᴡ ᴘʟᴀɴꜱ & ᴘʀɪᴄᴇ", callback_data="buy_vip_cb")],
+            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
+        ]
+    )
 
     try:
         is_active, expiry = await db.check_paid_access(user_id)
@@ -78,7 +84,7 @@ async def check_user_plan_command(client: Client, message: Message):
         else:
             await message.reply(
                 f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.</b>\n\n"
-                f"<i>ᴄᴏɴᴛᴀᴄᴛ ᴀᴅᴍɪɴ ᴛᴏ ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇss!</i></blockquote>",
+                f"<i>ɴɪᴄʜᴇ ʙᴜᴛᴛᴏɴ ᴘᴀʀ ᴄʟɪᴄᴋ ᴋᴀʀᴋᴇ ᴘʟᴀɴꜱ & ᴘʀɪᴄᴇ ᴅᴇᴋʜᴇɪɴ!</i></blockquote>",
                 reply_markup=reply_markup,
                 quote=True
             )
@@ -140,10 +146,10 @@ async def start_command(client: Client, message: Message):
         if not is_active and user_id not in ADMINS:
             return await message.reply_text(
                 "<blockquote><b>⛔️ ᴩᴀɪᴅ ᴀᴄᴄᴇꜱꜱ ʀᴇqᴜɪʀᴇᴅ!</b>\n\n"
-                "<i>ʏᴇ ʙᴏᴛ ᴀʙ <b>ᴩᴀɪᴅ</b> ʜᴏ 🫥ᴜᴋᴀ ʜᴀɪ. ꜰɪʟᴇꜱ ᴋᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴀᴄᴛɪᴠᴇ <b>ᴠɪᩩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ</b> ʜᴏɴᴀ ᴄʜᴀʜɪyᴇ.</i></blockquote>",
+                "<i>ʏᴇ ʙᴏᴛ ᴀʙ <b>ᴩᴀɪᴅ</b> ʜᴏ ᴄʜᴜᴋᴀ ʜᴀɪ. ꜰɪʟᴇꜱ ᴋᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴀᴄᴛɪᴠᴇ <b>ᴠɪᴘ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ</b> ʜᴏɴᴀ ᴄʜᴀʜɪyᴇ.</i></blockquote>",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ", url=PAYMENT_LINK)],
+                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ (ᴠɪᴇᴡ ᴘʀɪᴄᴇ)", callback_data="buy_vip_cb")],
                         [InlineKeyboardButton("👤 ᴄʜᴇᴄᴋ ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
                         [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
                     ]
@@ -258,9 +264,9 @@ async def start_command(client: Client, message: Message):
                 username=None if not message.from_user.username else '@' + message.from_user.username,
                 mention=message.from_user.mention,
                 id=message.from_user.id
-            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
+            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴘ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
             reply_markup=get_start_keyboard(),
-            message_effect_id=5104841245755180586)  # 🔥
+            message_effect_id=5104841245755180586)
         
         return
 
@@ -360,99 +366,119 @@ async def not_joined(client: Client, message: Message):
         )
 
 
-# --- 🔘 CALLBACK QUERY HANDLERS (FULL BUTTON PERSISTENCE FIX) ---
-@Bot.on_callback_query(filters.regex("^start$"))
-async def start_cb(client: Client, query: CallbackQuery):
+# --- 🔘 CALLBACK QUERY HANDLERS ---
+@Bot.on_callback_query(filters.regex("^buy_vip_cb$"))
+async def buy_vip_callback(client: Client, query: CallbackQuery):
+    plans_markup = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("⚡ 7 ᴅᴀʏs (₹30)", callback_data="plan_7d"), InlineKeyboardButton("⚡ 15 ᴅᴀʏs (₹50)", callback_data="plan_15d")],
+            [InlineKeyboardButton("⚡ 1 ᴍᴏɴᴛʜ (₹90)", callback_data="plan_1m"), InlineKeyboardButton("⚡ 3 ᴍᴏɴᴛʜs (₹220)", callback_data="plan_3m")],
+            [InlineKeyboardButton("⚡ ʟɪғᴇᴛɪᴍᴇ (₹499)", callback_data="plan_life")],
+            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
+        ]
+    )
+    text = "<blockquote><b>💎 ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴs & ᴘʀɪᴄɪɴɢ 💎</b>\n\n<i>Kripya niche se apna pasandida plan select karein:</i></blockquote>"
     try:
-        await query.message.edit_media(
-            media=InputMediaPhoto(
-                media=START_PIC,
-                caption=START_MSG.format(
-                    first=query.from_user.first_name,
-                    last=query.from_user.last_name,
-                    username=None if not query.from_user.username else '@' + query.from_user.username,
-                    mention=query.from_user.mention,
-                    id=query.from_user.id
-                ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
-                parse_mode=ParseMode.HTML
-            ),
-            reply_markup=get_start_keyboard()
-        )
+        await query.message.edit_caption(caption=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
     except Exception:
-        # Fallback agar edit_media photo support na kare toh naya message bhej kar purana delete kar dein
+        await query.message.edit_text(text=text, reply_markup=plans_markup, parse_mode=ParseMode.HTML)
+
+
+# Plan-specific handlers that show the QR Code
+@Bot.on_callback_query(filters.regex("^plan_"))
+async def select_plan_callback(client: Client, query: CallbackQuery):
+    data = query.data
+    
+    plan_info = {
+        "plan_7d": ("7 Days Plan", "₹30"),
+        "plan_15d": ("15 Days Plan", "₹50"),
+        "plan_1m": ("1 Month Plan", "₹90"),
+        "plan_3m": ("3 Months Plan", "₹220"),
+        "plan_life": ("Lifetime Plan", "₹499")
+    }
+    
+    plan_name, plan_price = plan_info.get(data, ("VIP Plan", "As per chart"))
+    
+    caption_text = (
+        f"<blockquote><b>💎 ꜱᴇʟᴇᴄᴛᴇᴅ ᴘʟᴀɴ ᴅᴇᴛᴀɪʟꜱ:</b>\n\n"
+        f"<b>📦 ᴘʟᴀɴ:</b> <code>{plan_name}</code>\n"
+        f"<b>💰 ᴘʀɪᴄᴇ:</b> <code>{plan_price}</code>\n\n"
+        f"<b>📌 ᴘᴀʏᴍᴇɴᴛ ɪɴsᴛʀᴜᴄᴛɪᴏɴs:</b>\n"
+        f"1. <i>Niche diye gaye QR code ko scan karke payment karein.</i>\n"
+        f"2. <i>Payment successful hone ke baad screenshot admin ko bhejein.</i></blockquote>"
+    )
+    
+    qr_markup = InlineKeyboardMarkup(
+        [
+            [InlineKeyboardButton("💳 ꜱᴇɴᴅ sᴄʀᴇᴇɴsʜᴏᴛ ᴛᴏ ᴀᴅᴍɪɴ", url=PAYMENT_LINK)],
+            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ ᴛᴏ ᴘʟᴀɴs", callback_data="buy_vip_cb"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
+        ]
+    )
+    
+    try:
         await query.message.delete()
         await client.send_photo(
             chat_id=query.message.chat.id,
+            photo=PAYMENT_QR,
+            caption=caption_text,
+            reply_markup=qr_markup,
+            parse_mode=ParseMode.HTML
+        )
+    except Exception as e:
+        await query.answer(f"Error: {e}", show_alert=True)
+
+
+@Bot.on_callback_query(filters.regex("^start$"))
+async def start_cb(client: Client, query: CallbackQuery):
+    start_caption = START_MSG.format(
+        first=query.from_user.first_name,
+        last=query.from_user.last_name,
+        username=None if not query.from_user.username else '@' + query.from_user.username,
+        mention=query.from_user.mention,
+        id=query.from_user.id
+    ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴘ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>"
+
+    try:
+        await query.message.edit_caption(
+            caption=start_caption,
+            reply_markup=get_start_keyboard(),
+            parse_mode=ParseMode.HTML
+        )
+    except Exception:
+        # Fallback agar photo message na ho toh naya bhej kar purana delete kar dein
+        try:
+            await query.message.delete()
+        except:
+            pass
+        await client.send_photo(
+            chat_id=query.message.chat.id,
             photo=START_PIC,
-            caption=START_MSG.format(
-                first=query.from_user.first_name,
-                last=query.from_user.last_name,
-                username=None if not query.from_user.username else '@' + query.from_user.username,
-                mention=query.from_user.mention,
-                id=query.from_user.id
-            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᩩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᩩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
-            reply_markup=get_start_keyboard()
+            caption=start_caption,
+            reply_markup=get_start_keyboard(),
+            parse_mode=ParseMode.HTML
         )
 
 
 @Bot.on_callback_query(filters.regex("^help$"))
 async def help_cb(client: Client, query: CallbackQuery):
     back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
-    await query.message.edit_text(
-        text=HELP_TXT,
-        reply_markup=back_markup,
-        parse_mode=ParseMode.HTML
-    )
+    try:
+        await query.message.edit_caption(
+            caption=HELP_TXT,
+            reply_markup=back_markup,
+            parse_mode=ParseMode.HTML
+        )
+    except Exception:
+        await query.message.edit_text(
+            text=HELP_TXT,
+            reply_markup=back_markup,
+            parse_mode=ParseMode.HTML
+        )
 
 
 @Bot.on_callback_query(filters.regex("^about$"))
 async def about_cb(client: Client, query: CallbackQuery):
     back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
-    await query.message.edit_text(
-        text=ABOUT_TXT,
-        reply_markup=back_markup,
-        parse_mode=ParseMode.HTML
-    )
-
-
-@Bot.on_callback_query(filters.regex("^my_plan_cb$"))
-async def my_plan_callback(client: Client, query: CallbackQuery):
-    user_id = query.from_user.id
-    back_markup = InlineKeyboardMarkup([[InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]])
-
     try:
-        is_active, expiry = await db.check_paid_access(user_id)
-        if is_active:
-            if isinstance(expiry, datetime):
-                exp_str = expiry.strftime("%d-%b-%Y | %I:%M %p")
-            else:
-                exp_str = str(expiry)
-            
-            await query.message.edit_text(
-                f"<blockquote><b>💎 ʏᴏᴜʀ ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ ɪs ᴀᴄᴛɪᴠᴇ!</b>\n\n"
-                f"<b>👤 ᴜsᴇʀ:</b> {query.from_user.mention}\n"
-                f"<b>🆔 ɪᴅ:</b> <code>{user_id}</code>\n"
-                f"<b>⏳ ᴇxᴘɪʀʏ:</b> <code>{exp_str}</code></blockquote>",
-                reply_markup=back_markup,
-                parse_mode=ParseMode.HTML
-            )
-        else:
-            await query.message.edit_text(
-                f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.</b>\n\n"
-                f"<i>ᴄᴏɴᴛᴀᴄᴛ ᴀᴅᴍɪɴ ᴛᴏ ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇss!</i></blockquote>",
-                reply_markup=back_markup,
-                parse_mode=ParseMode.HTML
-            )
-    except Exception as e:
-        await query.message.edit_text(f"<b>❌ ᴇʀʀᴏʀ:</b> <code>{e}</code>", reply_markup=back_markup, parse_mode=ParseMode.HTML)
-
-
-@Bot.on_message(filters.command('commands') & filters.private & admin)
-async def bcmd(bot: Bot, message: Message):        
-    reply_markup = InlineKeyboardMarkup(
-        [
-            [InlineKeyboardButton("• ᴀʙᴏᴜᴛ •", callback_data="about"), InlineKeyboardButton("• ʜᴇʟᴩ •", callback_data="help")],
-            [InlineKeyboardButton("• ᴄʟᴏꜱᴇ •", callback_data="close")]
-        ]
-    )
-    await message.reply(text=CMD_TXT, reply_markup=reply_markup, quote=True)
+        await query.message.edit_caption(
+  
