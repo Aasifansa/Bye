@@ -13,15 +13,16 @@ PAYMENT_QR = "https://image.zaw-myo.workers.dev/image/db8410f2-94c7-41ab-acdc-e7
 
 async def smart_edit(query: CallbackQuery, text: str, reply_markup: InlineKeyboardMarkup):
     try:
-        if query.message.photo:
+        if query.message.caption is not None:
             await query.message.edit_caption(caption=text, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
         else:
             await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
-    except Exception:
+    except Exception as e:
+        print(f"Smart Edit Error: {e}")
         try:
             await query.message.edit_text(text=text, disable_web_page_preview=True, reply_markup=reply_markup, parse_mode=ParseMode.HTML)
-        except Exception as e:
-            print(f"Smart Edit Error: {e}")
+        except Exception as err:
+            print(f"Fallback Edit Error: {err}")
 
 @Bot.on_callback_query()
 async def cb_handler(client: Bot, query: CallbackQuery):
@@ -75,17 +76,10 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
             ])
 
-            try:
-                if query.message.photo:
-                    await query.message.edit_caption(caption=start_full_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
-                else:
-                    await query.message.delete()
-                    await client.send_photo(chat_id=query.message.chat.id, photo=START_PIC, caption=start_full_text, reply_markup=keyboard, parse_mode=ParseMode.HTML)
-            except Exception:
-                await smart_edit(query, text=start_full_text, reply_markup=keyboard)
+            await smart_edit(query, text=start_full_text, reply_markup=keyboard)
 
         elif data == "buy_vip_cb":
-            await query.answer("Loading VIP Plans...")
+            await query.answer()
             plans_markup = InlineKeyboardMarkup(
                 [
                     [InlineKeyboardButton("⚡ 7 ᴅᴀʏꜱ (₹30)", callback_data="plan_7d"), InlineKeyboardButton("⚡ 15 ᴅᴀʏꜱ (₹50)", callback_data="plan_15d")],
@@ -98,7 +92,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await smart_edit(query, text=text, reply_markup=plans_markup)
 
         elif data.startswith("plan_"):
-            await query.answer("Fetching Payment QR...")
+            await query.answer()
             plan_info = {
                 "plan_7d": ("7 Days Plan", "₹30"),
                 "plan_15d": ("15 Days Plan", "₹50"),
@@ -137,7 +131,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 await query.answer(f"Error: {e}", show_alert=True)
 
         elif data == "my_plan_cb":
-            await query.answer("Checking your plan...")
+            await query.answer()
             is_active, expiry = await db.check_paid_access(user_id)
             plan_markup = InlineKeyboardMarkup(
                 [
@@ -175,66 +169,10 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             except Exception:
                 pass
 
-        elif data.startswith("rfs_ch_"):
-            await query.answer()
-            cid = int(data.split("_")[2])
-            try:
-                chat = await client.get_chat(cid)
-                mode = await db.get_channel_mode(cid)
-                status = "🟢 ᴏɴ" if mode == "on" else "🔴 ᴏꜰꜰ"
-                new_mode = "off" if mode == "on" else "on"
-                buttons = [
-                    [InlineKeyboardButton(f"ʀᴇq ᴍᴏᴅᴇ {'OFF' if mode == 'on' else 'ON'}", callback_data=f"rfs_toggle_{cid}_{new_mode}")],
-                    [InlineKeyboardButton("‹ ʙᴀᴄᴋ", callback_data="fsub_back")]
-                ]
-                await query.message.edit_text(
-                    f"<blockquote><b>ᴄʜᴀɴɴᴇʟ:</b> {chat.title}\n<b>ᴄᴜʀʀᴇɴᴛ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b> {status}</blockquote>",
-                    reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML
-                )
-            except Exception:
-                await query.answer("ꜰᴀɪʟᴇᴅ ᴛᴏ ꜰᴇᴛᴄʜ ᴄʜᴀɴɴᴇʟ ɪɴꜰᴏ", show_alert=True)
-
-        elif data.startswith("rfs_toggle_"):
-            cid, action = data.split("_")[2:]
-            cid = int(cid)
-            mode = "on" if action == "on" else "off"
-            await db.set_channel_mode(cid, mode)
-            await query.answer(f"ꜰᴏʀᴄᴇ-ꜱᴜʙ ꜱᴇᴛ ᴛᴏ {'ON' if mode == 'on' else 'OFF'}")
-
-            chat = await client.get_chat(cid)
-            status = "🟢 ᴏɴ" if mode == "on" else "🔴 ᴏꜰꜰ"
-            new_mode = "off" if mode == "on" else "on"
-            buttons = [
-                [InlineKeyboardButton(f"ʀᴇq ᴍᴏᴅᴇ {'OFF' if mode == 'on' else 'ON'}", callback_data=f"rfs_toggle_{cid}_{new_mode}")],
-                [InlineKeyboardButton("‹ ʙᴀᴄᴋ", callback_data="fsub_back")]
-            ]
-            await query.message.edit_text(
-                f"<blockquote><b>ᴄʜᴀɴɴᴇʟ:</b> {chat.title}\n<b>ᴄᴜʀʀᴇɴᴛ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b> {status}</blockquote>",
-                reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML
-            )
-
-        elif data == "fsub_back":
-            await query.answer()
-            channels = await db.show_channels()
-            buttons = []
-            for cid in channels:
-                try:
-                    chat = await client.get_chat(cid)
-                    mode = await db.get_channel_mode(cid)
-                    status = "🟢" if mode == "on" else "🔴"
-                    buttons.append([InlineKeyboardButton(f"{status} {chat.title}", callback_data=f"rfs_ch_{cid}")])
-                except:
-                    continue
-
-            await query.message.edit_text(
-                "<blockquote><b>ꜱᴇʟᴇᴄᴛ ᴀ ᴄʜᴀɴɴᴇʟ ᴛᴏ ᴛᴏɢɢʟᴇ ɪᴛꜱ ꜰᴏʀᴄᴇ-ꜱᴜʙ ᴍᴏᴅᴇ:</b></blockquote>",
-                reply_markup=InlineKeyboardMarkup(buttons), parse_mode=ParseMode.HTML
-            )
-
     except Exception as e:
         print(f"[CB ERROR]: {e}")
         try:
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-                                          
+        
