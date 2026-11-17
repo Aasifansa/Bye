@@ -33,7 +33,7 @@ def get_start_keyboard():
             ],
             [
                 InlineKeyboardButton("ℹ️ ᴀʙᴏᴜᴛ", callback_data="about"),
-                InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data="help")
+                InlineKeyboardButton("📚 ʜᴇʟᴩ", callback_data="faq_menu")
             ],
             [
                 InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")
@@ -46,8 +46,8 @@ async def check_user_plan_command(client: Client, message: Message):
     user_id = message.from_user.id
     reply_markup = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("💎 ᴠɪᴇᴡ ᴘʟᴀɴꜱ & ᴘʀɪᴄᴇ", callback_data="buy_vip_cb")],
-            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
+            [InlineKeyboardButton("💎 ᴠɪᴇᴡ ᴩʟᴀɴꜱ & ᴩʀɪᴄᴇ", callback_data="buy_vip_cb")],
+            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ", callback_data="start"), InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
         ]
     )
 
@@ -60,17 +60,17 @@ async def check_user_plan_command(client: Client, message: Message):
                 exp_str = str(expiry)
             
             await message.reply(
-                f"<blockquote><b>💎 ʏᴏᴜʀ ᴠɪᴘ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ ɪs ᴀᴄᴛɪᴠᴇ!</b>\n\n"
-                f"<b>👤 ᴜsᴇʀ:</b> {message.from_user.mention}\n"
+                f"<blockquote><b>💎 ʏᴏᴜʀ ᴠɪᴩ ᴩʀᴇᴍɪᴜᴍ ᴩʟᴀɴ ɪꜱ ᴀᴄᴛɪᴠᴇ!</b>\n\n"
+                f"<b>👤 ᴜꜱᴇʀ:</b> {message.from_user.mention}\n"
                 f"<b>🆔 ɪᴅ:</b> <code>{user_id}</code>\n"
-                f"<b>⏳ ᴇxᴘɪʀʏ:</b> <code>{exp_str}</code></blockquote>",
+                f"<b>⏳ ᴇxᴩɪʀʏ:</b> <code>{exp_str}</code></blockquote>",
                 reply_markup=reply_markup,
                 quote=True
             )
         else:
             await message.reply(
-                f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴ.</b>\n\n"
-                f"<i>ɴɪᴄʜᴇ ʙᴜᴛᴛᴏɴ ᴘᴀʀ ᴄʟɪᴄᴋ ᴋᴀʀᴋᴇ ᴘʟᴀɴꜱ & ᴘʀɪᴄᴇ ᴅᴇᴋʜᴇɪɴ!</i></blockquote>",
+                f"<blockquote><b>❌ ʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴ ᴀᴄᴛɪᴠᴇ ᴩʀᴇᴍɪᴜᴍ ᴩʟᴀɴ.</b>\n\n"
+                f"<i>ɴɪᴄʜᴇ ʙᴜᴛᴛᴏɴ ᴩᴀʀ ᴄʟɪᴄᴋ ᴋᴀʀᴋᴇ ᴩʟᴀɴꜱ & ᴩʀɪᴄᴇ ᴅᴇᴋʜᴇɪْن!</i></blockquote>",
                 reply_markup=reply_markup,
                 quote=True
             )
@@ -107,17 +107,30 @@ async def start_command(client: Client, message: Message):
         try:
             current_time = datetime.now().strftime("%d-%b-%Y | %I:%M:%S %p")
             log_text = (
-                f"<blockquote><b>🚀 #ɴᴇᴡ_ᴜsᴇʀ_sᴛᴀʀᴛᴇᴅ_ʙᴏᴛ</b>\n\n"
-                f"<b>ᴄᴏᴅᴇ ɪs ʟɪᴋᴇ ʜᴜᴍᴏʀ, ɪᴛ ᴡᴏʀᴋs ʙᴇsᴛ</b>\n"
-                f"<b>ᴡʜᴇɴ ɪᴛ ɪs ᴇxᴘʀᴇssᴇᴅ ɪɴ sɪᴍᴘʟᴇ ᴡᴏʀᴅs.</b>\n\n"
-                f"<b>👤 ᴜsᴇʀ ɴᴀᴍᴇ:</b> {message.from_user.mention}\n"
-                f"<b>🆔 ᴜsᴇʀ ɪᴅ:</b> <code>{message.from_user.id}</code>\n"
-                f"<b>🌐 ᴜsᴇʀɴᴀᴍᴇ:</b> @{message.from_user.username or 'ɴᴏɴᴇ'}\n"
+                f"<blockquote><b>🚀 #ɴᴇᴡ_ᴜꜱᴇʀ_ꜱᴛᴀʀᴛᴇᴅ_ʙᴏᴛ</b>\n\n"
+                f"<b>ᴄᴏᴅᴇ ɪꜱ ʟɪᴋᴇ ʜᴜᴍᴏʀ, ɪᴛ ᴡᴏʀᴋꜱ ʙᴇꜱᴛ</b>\n"
+                f"<b>ᴡʜᴇɴ ɪᴛ ɪꜱ ᴇxᴩʀᴇꜱꜱᴇᴅ ɪɴ ꜱɪᴍᴩʟᴇ ᴡᴏʀᴅꜱ.</b>\n\n"
+                f"<b>👤 ᴜꜱᴇʀ ɴᴀᴍᴇ:</b> {message.from_user.mention}\n"
+                f"<b>🆔 ᴜꜱᴇʀ ɪᴅ:</b> <code>{message.from_user.id}</code>\n"
+                f"<b>🌐 ᴜꜱᴇʀɴᴀᴍᴇ:</b> @{message.from_user.username or 'ɴᴏɴᴇ'}\n"
                 f"<b>📅 ᴅᴀᴛᴇ & ᴛɪᴍᴇ:</b> <code>{current_time}</code></blockquote>"
             )
             await client.send_message(LOG_CHANNEL, log_text)
         except Exception as e:
             print(f"sᴛᴀʀᴛ ʟᴏɢ ᴇʀʀᴏʀ: {e}")
+
+    # --- RULES AGREEMENT GATE CHECK ---
+    is_rules_accepted = await db.check_rules_accepted(user_id)
+    if not is_rules_accepted:
+        welcome_rules_text = (
+            f"<blockquote><b>👋 ᴡᴇʟᴄᴏᴍᴇ {message.from_user.first_name} ᴛᴏ ᴏᴛᴀᴋᴜꜰʟɪx ɴᴇᴛᴡᴏʀᴋ!</b>\n\n"
+            f"<i>ʙᴏᴛ ᴋᴏ ᴜꜱᴇ ᴋᴀʀɴᴇ ꜱᴇ ᴩᴇʜʟᴇ ʜᴀᴍᴀʀᴇ ᴛᴇʀᴍꜱ ᴀᴜʀ ʀᴜʟᴇꜱ ᴩᴀᴅʜɴᴀ ᴀɴɪᴠᴀʀʏᴀ ʜᴀɪ.</i></blockquote>"
+        )
+        rules_markup = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📜 ʀᴇᴀᴅ ʀᴜʟᴇꜱ & ᴀᴄᴄᴇᴩᴛ", callback_data="read_rules")],
+            [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
+        ])
+        return await message.reply_photo(photo=START_PIC, caption=welcome_rules_text, reply_markup=rules_markup)
 
     is_active, expiry = await db.check_paid_access(user_id)
 
@@ -125,11 +138,11 @@ async def start_command(client: Client, message: Message):
     if len(text) > 7:
         if not is_active and user_id not in ADMINS:
             return await message.reply_text(
-                "<blockquote><b>⛔️ ᴩᴀɪᴅ ᴀᴄᴄᴇꜱꜱ ʀᴇqᴜɪʀᴇᴅ!</b>\n\n"
-                "<i>ʏᴇ ʙᴏᴛ ᴀʙ <b>ᴩᴀɪᴅ</b> ʜᴏ ᴄʜᴜᴋᴀ ʜᴀɪ. ꜰɪʟᴇꜱ ᴋᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴀᴄᴛɪᴠᴇ <b>ᴠɪᴘ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ</b> ʜᴏɴᴀ ᴄʜᴀʜɪyᴇ.</i></blockquote>",
+                "<blockquote><b>⛔️ ᴩᴀɪᴅ ᴀᴄᴄᴇꜱꜱ ʀᴇǫᴜɪʀᴇᴅ!</b>\n\n"
+                "<i>ʏᴇ ʙᴏᴛ ᴀʙ <b>ᴩᴀɪᴅ</b> ʜᴏ ᴄʜᴜᴋᴀ ʜᴀɪ. ꜰɪʟᴇꜱ ᴋᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴋᴀʀɴᴇ ᴋᴇ ʟɪyᴇ ᴀᴀᴩᴋᴇ ᴩᴀᴀꜱ ᴀᴄᴛɪᴠᴇ <b>ᴠɪᴩ ꜱᴜʙꜱᴄʀɪᴩᴛɪᴏɴ</b> ʜᴏɴᴀ ᴄʜᴀʜɪyᴇ.</i></blockquote>",
                 reply_markup=InlineKeyboardMarkup(
                     [
-                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ (ᴠɪᴇᴡ ᴘʀɪᴄᴇ)", callback_data="buy_vip_cb")],
+                        [InlineKeyboardButton("💎 ʙᴜʏ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ (ᴠɪᴇᴡ ᴩʀɪᴄᴇ)", callback_data="buy_vip_cb")],
                         [InlineKeyboardButton("👤 ᴄʜᴇᴄᴋ ᴍʏ ᴩʟᴀɴ", callback_data="my_plan_cb")],
                         [InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
                     ]
@@ -165,7 +178,7 @@ async def start_command(client: Client, message: Message):
         try:
             messages = await get_messages(client, ids)
         except Exception as e:
-            await message.reply_text("ꜱᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ ᴡʀᴏɴɢ!")
+            await message.reply_text("<b>ꜱᴏᴍᴇᴛʜɪɴɢ ᴡᴇɴᴛ ᴡʀᴏɴɢ!</b>")
             print(f"Error getting messages: {e}")
             return
         finally:
@@ -244,7 +257,7 @@ async def start_command(client: Client, message: Message):
                 username=None if not message.from_user.username else '@' + message.from_user.username,
                 mention=message.from_user.mention,
                 id=message.from_user.id
-            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴘ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴘ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
+            ) + "\n\n<blockquote><b>⚠️ ɴᴏᴛᴇ: ᴛʜɪꜱ ɪꜱ ᴀ ᴩᴀɪᴅ/ᴠɪᴩ ꜰɪʟᴇ ꜱᴛᴏʀᴇ ʙᴏᴛ.\nʏᴏᴜ ɴᴇᴇᴅ ᴀᴄᴛɪᴠᴇ ᴠɪᴩ ᴀᴄᴄᴇꜱꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ꜰɪʟᴇꜱ.</b></blockquote>",
             reply_markup=get_start_keyboard(),
             message_effect_id=5104841245755180586
         )
@@ -331,8 +344,9 @@ async def not_joined(client: Client, message: Message):
 async def bcmd(bot: Bot, message: Message):        
     reply_markup = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("• ᴀʙᴏᴜᴛ •", callback_data="about"), InlineKeyboardButton("• ʜᴇʟᴩ •", callback_data="help")],
+            [InlineKeyboardButton("• ᴀʙᴏᴜᴛ •", callback_data="about"), InlineKeyboardButton("• ʜᴇʟᴩ •", callback_data="faq_menu")],
             [InlineKeyboardButton("• ᴄʟᴏꜱᴇ •", callback_data="close")]
         ]
     )
     await message.reply(text=CMD_TXT, reply_markup=reply_markup, quote=True)
+        
