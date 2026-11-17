@@ -1,13 +1,16 @@
 # Don't Remove Credit @CodeFlix_Bots, @rohit_1888
 # Ask Doubt on telegram @CodeflixSupport
 
+import os
+import time
+import asyncio
 from pyrogram import Client 
 from bot import Bot
 from config import *
 from pyrogram.enums import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from database.database import *
-from datetime import datetime
+from datetime import datetime, timedelta
 
 PAYMENT_LINK = "https://t.me/mrkillersss" 
 PAYMENT_QR = "https://image.zaw-myo.workers.dev/image/db8410f2-94c7-41ab-acdc-e7e319b0e663"
@@ -112,31 +115,66 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             }
             plan_name, plan_price = plan_info.get(data, ("VIP Plan", "As per chart"))
             
+            # Har baar unique QR generate karne ke liye timestamp attach kiya hai
+            unique_tag = int(time.time())
+            dynamic_qr = f"{PAYMENT_QR}&t={unique_tag}" if "?" in PAYMENT_QR else f"{PAYMENT_QR}?t={unique_tag}"
+
+            expiry_time_str = (datetime.utcnow() + timedelta(hours=5, minutes=35)).strftime("%I:%M:%S %p")
+            
             caption_text = (
                 f"<blockquote><b>💎 ꜱᴇʟᴇᴄᴛᴇᴅ ᴘʟᴀɴ ᴅᴇᴛᴀɪʟꜱ:</b>\n\n"
                 f"<b>📦 ᴘʟᴀɴ:</b> <code>{plan_name}</code>\n"
                 f"<b>💰 ᴘʀɪᴄᴇ:</b> <code>{plan_price}</code>\n\n"
+                f"<b>⏳ ǫʀ ᴄᴏᴅᴇ ᴇxᴘɪʀʏ:</b> <code>5 Mins (Expires at {expiry_time_str} IST)</code>\n\n"
                 f"<b>📌 ᴘᴀʏᴍᴇɴᴛ ɪɴꜱᴛʀᴜᴄᴛɪᴏɴꜱ:</b>\n"
-                f"1. <i>Niche diye gaye QR code ko scan karke payment karein.</i>\n"
-                f"2. <i>Payment successful hone ke baad screenshot admin ko bhejein.</i></blockquote>"
+                f"1. <i>Yeh QR code sirf 5 minute ke liye valid hai.</i>\n"
+                f"2. <i>Scan karke payment karein, warna QR expire ho jayega!</i>\n"
+                f"3. <i>Payment ke baad screenshot admin ko bhejein.</i></blockquote>"
             )
             
             qr_markup = InlineKeyboardMarkup(
                 [
                     [InlineKeyboardButton("💳 ꜱᴇɴᴅ ꜱᴄʀᴇᴇɴꜱʜᴏᴛ ᴛᴏ ᴀᴅᴍɪɴ", url=PAYMENT_LINK)],
+                    [InlineKeyboardButton("🔄 ɢᴇɴᴇʀᴀᴛᴇ ɴᴇᴡ ǫʀ", callback_data=data)],
                     [InlineKeyboardButton("◀️ ʙᴀᴄᴋ ᴛᴏ ᴘʟᴀɴꜱ", callback_data="buy_vip_cb"), InlineKeyboardButton("❌ ᴄʟᴏꜱᴇ", callback_data="close")]
                 ]
             )
             
             try:
                 await query.message.delete()
-                await client.send_photo(
+                sent_msg = await client.send_photo(
                     chat_id=query.message.chat.id,
-                    photo=PAYMENT_QR,
+                    photo=dynamic_qr,
                     caption=caption_text,
                     reply_markup=qr_markup,
                     parse_mode=ParseMode.HTML
                 )
+
+                # Background task jo 5 minute (300 seconds) baad QR ko expire kar dega
+                async def expire_qr_task(client_obj, chat_id, msg_id):
+                    await asyncio.sleep(300)  # 5 Minutes
+                    try:
+                        expired_caption = (
+                            f"<blockquote><b>❌ ǫʀ ᴄᴏᴅᴇ ᴇxᴘɪʀᴇᴅ!</b>\n\n"
+                            f"<b>📦 ᴘʟᴀɴ:</b> <code>{plan_name} ({plan_price})</code>\n\n"
+                            f"<i>Yeh QR code 5 minute ki limit cross hone ki wajah se expire ho chuka hai. Kripya naya QR generate karne ke liye niche button par click karein.</i></blockquote>"
+                        )
+                        expired_markup = InlineKeyboardMarkup([
+                            [InlineKeyboardButton("🔄 ɢᴇɴᴇʀᴀᴛᴇ ɴᴇᴡ ǫʀ", callback_data=data)],
+                            [InlineKeyboardButton("◀️ ʙᴀᴄᴋ ᴛᴏ ᴘʟᴀɴꜱ", callback_data="buy_vip_cb")]
+                        ])
+                        await client_obj.edit_message_caption(
+                            chat_id=chat_id,
+                            message_id=msg_id,
+                            caption=expired_caption,
+                            reply_markup=expired_markup,
+                            parse_mode=ParseMode.HTML
+                        )
+                    except Exception:
+                        pass
+
+                asyncio.create_task(expire_qr_task(client, query.message.chat.id, sent_msg.id))
+
             except Exception as e:
                 await query.answer(f"Error: {e}", show_alert=True)
 
@@ -188,4 +226,3 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             await query.answer(f"ᴇʀʀᴏʀ: {e}", show_alert=True)
         except:
             pass
-        
