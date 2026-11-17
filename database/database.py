@@ -41,7 +41,11 @@ class Rohit:
 
     async def add_user(self, user_id: int):
         if not await self.present_user(user_id):
-            await self.user_data.insert_one({'_id': user_id, 'joined_date': datetime.utcnow()})
+            await self.user_data.insert_one({
+                '_id': user_id, 
+                'joined_date': datetime.utcnow(),
+                'rules_accepted': False
+            })
         return
 
     async def full_userbase(self):
@@ -52,6 +56,22 @@ class Rohit:
     async def del_user(self, user_id: int):
         await self.user_data.delete_one({'_id': user_id})
         return
+
+
+    # ================= RULES AGREEMENT DATA =================
+    async def check_rules_accepted(self, user_id: int) -> bool:
+        """Check karta hai ki user ne bot ke rules accept kiye hain ya nahi"""
+        user = await self.user_data.find_one({'_id': int(user_id)})
+        return user.get('rules_accepted', False) if user else False
+
+    async def accept_rules(self, user_id: int):
+        """User ka rules acceptance status True set karta hai"""
+        await self.user_data.update_one(
+            {'_id': int(user_id)},
+            {'$set': {'rules_accepted': True}},
+            upsert=True
+        )
+    # ========================================================
 
 
     # ================= PAID / PREMIUM USER DATA =================
@@ -240,3 +260,4 @@ class Rohit:
 
 
 db = Rohit(DB_URI, DB_NAME)
+        
