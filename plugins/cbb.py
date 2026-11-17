@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 PAYMENT_LINK = "https://t.me/mrkillersss" 
 
 # Yahan apni asli UPI ID daal dein (jaise yourname@okhdfcbank ya yourname@ybl)
-UPI_ID = "mrkillersss@oksbi" 
+UPI_ID = "aloneboy765592@okicici" 
 
 @Bot.on_callback_query()
 async def cb_handler(client: Bot, query: CallbackQuery):
