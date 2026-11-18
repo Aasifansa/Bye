@@ -18,19 +18,19 @@ from logging.handlers import RotatingFileHandler
 #rohit_1888 on Tg
 #--------------------------------------------
 #Bot token @Botfather
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "7750523801:AAExuemiH46fO8VBaG2zBPmtVYYkbDQT8tM")
-APP_ID = int(os.environ.get("APP_ID", "20901045")) #Your API ID from my.telegram.org
-API_HASH = os.environ.get("API_HASH", "dec03cafafbd892b285499762a896082") #Your API Hash from my.telegram.org
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "PmtVYYkbDQT8tM")
+APP_ID = int(os.environ.get("APP_ID", "")) #Your API ID from my.telegram.org
+API_HASH = os.environ.get("API_HASH", "") #Your API Hash from my.telegram.org
 #--------------------------------------------
 
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-1002208437940")) #Your db channel Id
+CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-")) #Your db channel Id
 
 # ᴀ ʙᴏᴛ ɪs ɴᴏᴛ ᴊᴜsᴛ ʟɪɴᴋs ᴀɴᴅ ᴄᴏᴅᴇ, ɪᴛ ɪs ᴛʜᴇ ʙʀɪᴅɢᴇ ʙᴇᴛᴡᴇᴇɴ ᴄᴜʀɪᴏsɪᴛʏ ᴀɴᴅ ᴅɪsᴄᴏᴠᴇʀʏ.
 # ❝ ᴛʜᴇ ʙᴇsᴛ ᴡᴀʏ ᴛᴏ ᴘʀᴇᴅɪᴄᴛ ᴛʜᴇ ғᴜᴛᴜʀᴇ ɪs to ɪɴᴠᴇɴᴛ ɪᴛ, ᴀɴᴅ ᴇᴠᴇʀʏ ʟɪɴᴇ ᴏғ ᴄᴏᴅᴇ ɪs ᴀ sᴛᴇᴘ ɪɴ ᴛʜᴀᴛ ᴅɪʀᴇᴄᴛɪᴏɴ. ❞
 
 # --- ʟᴏɢ ᴄʜᴀɴɴᴇls ᴄᴏɴғɪɢᴜʀᴀᴛɪᴏɴ ---
-LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1002228337057"))  # ᴜsᴇʀ ᴀᴄᴛɪᴠɪᴛʏ ʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ
-PREMIUM_LOG_CHANNEL = int(os.environ.get("PREMIUM_LOG_CHANNEL", "-1002233160226"))  # ᴘʀᴇᴍɪᴜᴍ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ
+LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-"))  # ᴜsᴇʀ ᴀᴄᴛɪᴠɪᴛʏ ʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ
+PREMIUM_LOG_CHANNEL = int(os.environ.get("PREMIUM_LOG_CHANNEL", ""))  # ᴘʀᴇᴍɪᴜᴍ ᴠᴇʀɪғɪᴄᴀᴛɪᴏɴ ʟᴏɢ ᴄʜᴀɴɴᴇʟ ɪᴅ
 
 OWNER = os.environ.get("OWNER", "Mrkillersss") # Owner username without @
 OWNER_ID = int(os.environ.get("OWNER_ID", "6324457826")) # Owner id
@@ -42,7 +42,7 @@ if OWNER_ID not in ADMINS:
 #--------------------------------------------
 PORT = os.environ.get("PORT", "8001")
 #--------------------------------------------
-DB_URI = os.environ.get("DATABASE_URL", "mongodb+srv://Help:Arise@cluster0.zf30oob.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+DB_URI = os.environ.get("DATABASE_URL", "")
 DB_NAME = os.environ.get("DATABASE_NAME", "Cluooo")
 #--------------------------------------------
 FSUB_LINK_EXPIRY = int(os.getenv("FSUB_LINK_EXPIRY", "10"))  # 0 means no expiry
